@@ -2,3 +2,5 @@
 __pycache__/
 
 .pg_pass
+
+images/

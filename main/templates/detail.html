@@ -1,0 +1,19 @@
+{% extends '_base.html' %}
+
+{% block title %}{{ image.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ image.title }}</h1>
+
+<p>{{ image.description }}</p>
+
+{% if image.tags %}
+    <ul>
+        {% for tag in image.tag %}
+        <li>
+            {{ tag.name }}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<h1>Search</h1>
+
+<table>
+    {% for image in images %}
+        <tr>
+            <td>
+                {{ image.title }}
+            </td>
+            <td>
+                <img src="{% url 'image' image.id %}" />
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
