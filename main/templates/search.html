@@ -3,18 +3,30 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-<h1>Search</h1>
+<div>
+    <form action="." method="get">
+        <input type="text" name="q" value="{{ query }}" />
+        <input type="submit" value="Search" />
+    </form>
+</div>
 
-<table>
-    {% for image in images %}
-        <tr>
-            <td>
+{% for image in images %}
+    <div>
+        <div>
+            <a href="{% url 'detail' image.id %}">
+                <img src="{% url 'image' image.id %}?format=thumbnail" loading="lazy" />
+            </a>
+        </div>
+        <div>
+            <div>
                 {{ image.title }}
-            </td>
-            <td>
-                <img src="{% url 'image' image.id %}" />
-            </td>
+            </div>
+            <div>
+                {{ image.description }}
+            </div>
+        </div>
         </tr>
-    {% endfor %}
-</table>
+    </div>
+{% endfor %}
+
 {% endblock %}
