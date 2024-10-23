@@ -1,6 +1,7 @@
 from datetime import datetime
 import io
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 import PIL.Image
 from .models import Image, Tag
@@ -11,8 +12,23 @@ def detail(request, image_id):
     return render(request, 'detail.html', {'image': image})
 
 def tags(request):
-    tags = Tag.objects.all()
-    return render(request, 'tags.html', {'tags': tags})
+    all_tags = Tag.objects.all().order_by('name')
+    paginator = Paginator(all_tags, 10)
+
+    try:
+        page_number = int(request.GET.get('p', 1))
+    except:
+        page_number = 1
+    
+    page = paginator.get_page(page_number)
+    tags = page.object_list
+
+    context = {
+        'tags': tags,
+        'page': page
+    }
+
+    return render(request, 'tags.html', context)
 
 def upload(request):
     if (request.method == "POST"):
@@ -20,7 +36,7 @@ def upload(request):
 
         if (form.is_valid()):
             image = form.save()
-            return HttpResponseRedirect(f'/view/{image.id}/')
+            return HttpResponseRedirect(f'/detail/{image.id}/')
     else:
         form = ImageForm()
 
@@ -37,8 +53,11 @@ def image(request, image_id):
 
     buffer = io.BytesIO()
 
-    if (format == 'thumbnail'):
-        im.thumbnail((128, 128))
+    match format:
+        case 'thumbnail':
+            im.thumbnail((128, 128))
+        case 'theater':
+            im.thumbnail((1920, 1920))
 
     im.save(buffer, file_extension)
     content = buffer.getvalue()

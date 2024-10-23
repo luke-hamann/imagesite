@@ -3,7 +3,11 @@
 {% block title %}{{ image.title }}{% endblock %}
 
 {% block content %}
-<h1>{{ image.title }}</h1>
+<div class="image-theater">
+    <img src="{% url 'image' image.id %}?format=theater" />
+</div>
+
+<h2>{{ image.title }}</h2>
 
 <p>{{ image.description }}</p>
 

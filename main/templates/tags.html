@@ -6,6 +6,19 @@
 
 <h1>Tags</h1>
 
+<p>
+    {% if page.has_previous %}
+        <a href=".?p={{ page.previous_page_number }}">
+            <button>&lt;</button>
+        </a>
+    {% endif %}
+    {% if page.has_next %}
+        <a href=".?p={{ page.next_page_number }}">
+            <button>&gt;</button>
+        </a>
+    {% endif %}
+</ul>
+
 {% for tag in tags %}
 <div>
     <h2>
