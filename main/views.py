@@ -7,6 +7,28 @@ import PIL.Image
 from .models import Image, Tag
 from .forms import ImageForm
 
+def image(request, image_id):
+    image = get_object_or_404(Image, pk=image_id)
+    format = request.GET.get('format', 'original')
+
+    im = PIL.Image.open(image.file)
+
+    content_type = im.get_format_mimetype()
+    file_extension = content_type.split("/")[1]
+
+    buffer = io.BytesIO()
+
+    match format:
+        case 'thumbnail':
+            im.thumbnail((128, 128))
+        case 'theater':
+            im.thumbnail((1920, 1920))
+
+    im.save(buffer, file_extension)
+    content = buffer.getvalue()
+
+    return HttpResponse(content, content_type=content_type)
+
 def detail(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'detail.html', {'image': image})
@@ -42,27 +64,15 @@ def upload(request):
 
     return render(request, 'upload.html', {'form': form})
 
-def image(request, image_id):
+def delete(request, image_id):
     image = get_object_or_404(Image, pk=image_id)
-    format = request.GET.get('format', 'original')
 
-    im = PIL.Image.open(image.file)
-
-    content_type = im.get_format_mimetype()
-    file_extension = content_type.split("/")[1]
-
-    buffer = io.BytesIO()
-
-    match format:
-        case 'thumbnail':
-            im.thumbnail((128, 128))
-        case 'theater':
-            im.thumbnail((1920, 1920))
-
-    im.save(buffer, file_extension)
-    content = buffer.getvalue()
-
-    return HttpResponse(content, content_type=content_type)
+    if (request.method == "POST"):
+        image.delete()
+        return HttpResponseRedirect(f'/search/')
+    else:
+        context = {'image': image}
+        return render(request, 'delete.html', context)
 
 def search(request):
     query = request.GET.get('q', '')
@@ -70,7 +80,7 @@ def search(request):
 
     context = {
         'query': query,
-        'images': images,
+        'images': images
     }
 
     return render(request, 'search.html', context)

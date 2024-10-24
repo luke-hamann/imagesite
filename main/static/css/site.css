@@ -46,9 +46,9 @@
     width: 5rem;
 }
 
-/* Headings */
+/* Page Elements */
 
-.h1, .h2 {
+.h1, .h2, .p {
     padding: 1rem;
 }
 
@@ -104,6 +104,10 @@
     margin: 0 auto;
     max-width: 100%;
     max-height: 80vh;
+}
+
+.upload-form input[type=submit] {
+    margin-top: 1rem;
 }
 
 /* Image Theater */

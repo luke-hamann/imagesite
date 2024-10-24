@@ -9,6 +9,12 @@
 
 <h2 class="h2">{{ image.title }}</h2>
 
+<p class="p">
+    <a href="{% url 'delete' image.id %}">
+        Delete
+    </a>
+</p>
+
 {% if image.tags %}
     <p>
         {% for tag in image.tags.all %}
@@ -17,6 +23,6 @@
     </p>
 {% endif %}
 
-<p>{{ image.description }}</p>
+<p class="p">{{ image.description }}</p>
 
 {% endblock %}

@@ -1,7 +1,7 @@
-from django.forms import ModelForm
+from django.forms import Form, ModelForm
 from .models import Image
 
 class ImageForm(ModelForm):
     class Meta:
         model = Image
-        fields = ['file', 'title', 'description', 'tags']
+        fields = ['title', 'description', 'tags', 'file']
