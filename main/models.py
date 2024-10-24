@@ -4,7 +4,9 @@ class Tag(models.Model):
     name = models.CharField(max_length=80)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=['name'], name="unique_name")]
+        constraints = [
+            models.UniqueConstraint(fields=['name'], name="unique_name")]
+        ordering = ['name']
 
     def __str__(self):
         return self.name

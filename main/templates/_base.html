@@ -6,20 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/site.css' %}" />
 </head>
 <body>
     <header>
         <nav>
-            <ul>
+            <ul class="list-unstyled navbar-list">
                 <li>
-                    <a href="{% url 'tags' %}">Tags</a>
+                    <a href="{% url 'tags' %}" class="navbar-link">
+                        Tags
+                    </a>
                 </li>
                 <li>
-                    <a href="{% url 'search' %}">Search</a>
+                    <a href="{% url 'search' %}" class="navbar-link">
+                        Search
+                    </a>
                 </li>
                 <li>
-                    <a href="{% url 'upload' %}">Upload</a>
+                    <a href="{% url 'upload' %}" class="navbar-link">
+                        Upload
+                    </a>
                 </li>
             </ul>
         </nav>
@@ -27,8 +33,10 @@
     <main>
         {% block content %}{% endblock %}
     </main>
-    <footer>
-
+    <footer class=".footer">
+        <p>
+            &copy; 2024 Luke Hamann
+        </p>
     </footer>
 </body>
 </html>

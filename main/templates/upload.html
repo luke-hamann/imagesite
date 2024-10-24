@@ -3,11 +3,29 @@
 {% block title %}Upload{% endblock %}
 
 {% block content %}
-<h1>Upload</h1>
+<h1 class="h1">Upload</h1>
 
-<form enctype="multipart/form-data" action="{% url 'upload' %}" method="post">
+<form enctype="multipart/form-data" action="{% url 'upload' %}"
+    method="post" class="upload-form">
     {% csrf_token %}
     {{ form }}
+    <img src="" class="upload-form-image-preview" />
     <input type="submit" value="Submit" />
 </form>
+
+</div>
+
+<script>
+    var preview_image = document.querySelector('.upload-form-image-preview');
+    var input_element = document.querySelector('[name=file]');
+
+    console.log(preview_image, input_element);
+
+    input_element.addEventListener('change', () => {
+        var [file] = input_element.files;
+        if (file) {
+            preview_image.src = URL.createObjectURL(file);
+        }
+    });
+</script>
 {% endblock %}

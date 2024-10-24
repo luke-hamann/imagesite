@@ -7,17 +7,16 @@
     <img src="{% url 'image' image.id %}?format=theater" />
 </div>
 
-<h2>{{ image.title }}</h2>
+<h2 class="h2">{{ image.title }}</h2>
+
+{% if image.tags %}
+    <p>
+        {% for tag in image.tags.all %}
+            <a href="{% url 'search' %}?q=%23{{ tag.name }}">{{ tag.name }}</a>
+        {% endfor %}
+    </p>
+{% endif %}
 
 <p>{{ image.description }}</p>
 
-{% if image.tags %}
-    <ul>
-        {% for tag in image.tag %}
-        <li>
-            {{ tag.name }}
-        </li>
-        {% endfor %}
-    </ul>
-{% endif %}
 {% endblock %}
