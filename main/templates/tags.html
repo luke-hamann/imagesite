@@ -4,9 +4,9 @@
 
 {% block content %}
 
-<h1 class="h1">Tags</h1>
+<h1 class="heading">Tags</h1>
 
-<p class="pagination-controls">
+<div class="pagination-panel">
     {% if page.has_previous %}
         <a href="?p=1" class="pagination-button">
             &lt;&lt;
@@ -22,17 +22,21 @@
             &lt;
         </span>
     {% endif %}
-    <span>Page</span>
-    <form method="get">
-        <input type="number" name="p" placeholder="{{ page.number }}"
-            class="pagination-input" />
-    </form>
-    <span>of</span>
+
+    <div class="inline-block">
+        <span>Page</span>
+        <form method="get" class="inline-block">
+            <input type="number" name="p" placeholder="{{ page.number }}"
+                class="pagination-input" />
+        </form>
+        <span>of {{ page.paginator.num_pages }}</span>
+    </div>
+
     {% if page.has_next %}
         <a href="?p={{ page.next_page_number }}" class="pagination-button">
             &gt;
         </a>
-        <a href="?p={{ page.num_pages }}" class="pagination-button">
+        <a href="?p={{ page.paginator.num_pages }}" class="pagination-button">
             &gt;&gt;
         </a>
     {% else %}
@@ -43,13 +47,13 @@
             &gt;&gt;
         </span>
     {% endif %}
-</p>
+
+</div>
 
 {% for tag in tags %}
-    <h2 class="h2">
-        <a href="{% url 'search' %}?q=%23{{ tag.name }}">
-            {{ tag.name }}
-        </a>
+    <h2 class="heading">
+        <a href="{% url 'search' %}?q={{ tag.name }}">{{ tag.name }}</a>
+        ({{ tag.image_set.count }})
     </h2>
     <ul class="list-unstyled image-list">
         {% for image in tag.image_set.all %}

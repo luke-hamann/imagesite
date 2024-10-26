@@ -3,10 +3,17 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
+<h1 class="heading">
+    Search
+</h1>
+
 <form action="." method="get">
-    <div class="float-right">
-        <input type="text" name="q" value="{{ query }}" />
+    <div>
+        <input type="search" name="q" value="{{ query }}" />
         <input type="submit" value="Search" />
+    </div>
+    <div>
+        {{ images.count }} image{{ images.count | pluralize }}
     </div>
     <table>
         {% for image in images %}
@@ -20,9 +27,6 @@
                     <h3>
                         {{ image.title }}
                     </h3>
-                    <p>
-                        {{ image.description }}
-                    </p>
                     <p>
                         {% for tag in image.tags.all %}
                             <span>{{ tag.name }}</span>

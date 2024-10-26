@@ -1,13 +1,16 @@
-from datetime import datetime
 import io
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.db.models import Q
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 import PIL.Image
 from .models import Image, Tag
 from .forms import ImageForm
 
-def image(request, image_id):
+
+def image(request: HttpRequest, image_id: int) -> HttpResponse:
+    """Return a given image file, resizing it if specified"""
+
     image = get_object_or_404(Image, pk=image_id)
     format = request.GET.get('format', 'original')
 
@@ -29,9 +32,39 @@ def image(request, image_id):
 
     return HttpResponse(content, content_type=content_type)
 
-def detail(request, image_id):
+
+def autocomplete(request: HttpRequest) -> HttpResponse:
+    query = request.GET.get('q', '')
+    tokens = query.split(' ')
+
+    last_token = tokens[-1]
+
+    tags = Tag.objects
+    tags = tags.filter(~Q(name__in=tokens))
+    tags = tags.filter(name__startswith=last_token)
+    tags = tags[:10]
+
+    suggestions = []
+    for tag in tags:
+        name = tag.name
+        diff = len(name) - len(last_token)
+        if (diff > 0):
+            suggestion = name[-diff:]
+            suggestions.append(suggestion)
+
+    context = {
+        'query': query,
+        'suggestions': suggestions
+    }
+
+    return render(request, 'autocomplete.html', context)
+
+
+def detail(request: HttpRequest, image_id: int) -> HttpResponse:
+    """Render the detail page for an individual image"""
     image = get_object_or_404(Image, pk=image_id)
     return render(request, 'detail.html', {'image': image})
+
 
 def tags(request):
     all_tags = Tag.objects.all().order_by('name')
@@ -42,6 +75,11 @@ def tags(request):
     except:
         page_number = 1
     
+    if (page_number < 1):
+        return HttpResponseRedirect('?p=1')
+    elif (page_number > paginator.num_pages):
+        return HttpResponseRedirect('?p=' + str(paginator.num_pages))
+
     page = paginator.get_page(page_number)
     tags = page.object_list
 
@@ -52,7 +90,10 @@ def tags(request):
 
     return render(request, 'tags.html', context)
 
+
 def upload(request):
+    """Render the form for uploading images or accept an upload request"""
+
     if (request.method == "POST"):
         form = ImageForm(request.POST, request.FILES)
 
@@ -60,11 +101,33 @@ def upload(request):
             image = form.save()
             return HttpResponseRedirect(f'/detail/{image.id}/')
     else:
+        tags = Tag.objects.all()
         form = ImageForm()
 
-    return render(request, 'upload.html', {'form': form})
+    context = {
+        'form': form,
+        'tags': tags
+    }
 
-def delete(request, image_id):
+    return render(request, 'upload.html', context)
+
+
+def edit(request: HttpRequest, image_id: int):
+    """Render a form for editing an existing image"""
+
+    image = get_object_or_404(Image, pk=image_id)
+    form = ImageForm(instance=image)
+    
+    context = {
+        'form': form,
+        'editing': True
+    }
+
+    return render(request, 'upload.html', context)
+
+
+def delete(request: HttpRequest, image_id: int):
+    """Confirm the deletion of an image"""
     image = get_object_or_404(Image, pk=image_id)
 
     if (request.method == "POST"):
@@ -74,13 +137,30 @@ def delete(request, image_id):
         context = {'image': image}
         return render(request, 'delete.html', context)
 
+
 def search(request):
     query = request.GET.get('q', '')
+
+    try:
+        page = int(request.GET.get('p', 1))
+    except:
+        page = 1
+
+    tokens = query.split()
+    positiveTokens = filter(lambda t : not t.startswith('-'), tokens)
+    negativeTokens = filter(lambda t : t.startswith('-'), tokens)
+
     images = Image.objects.all()
+
+    for token in positiveTokens:
+        images = images.filter(tags__name=token)
+    
+    for token in negativeTokens:
+        images = images.exclude(tags__name=token)
 
     context = {
         'query': query,
-        'images': images
+        'images': images,
     }
 
     return render(request, 'search.html', context)
