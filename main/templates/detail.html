@@ -11,6 +11,10 @@
 
 <h2 class="h2">{{ image.title }}</h2>
 
+<p>
+    {{ image.date }}
+</p>
+
 <p class="p">
     <a href="{% url 'delete' image.id %}">
         Delete

@@ -6,49 +6,7 @@
 
 <h1 class="heading">Tags</h1>
 
-<div class="pagination-panel">
-    {% if page.has_previous %}
-        <a href="?p=1" class="pagination-button">
-            &lt;&lt;
-        </a>
-        <a href="?p={{ page.previous_page_number }}" class="pagination-button">
-            &lt;
-        </a>
-    {% else %}
-        <span class="pagination-button">
-            &lt;&lt;
-        </span>
-        <span class="pagination-button">
-            &lt;
-        </span>
-    {% endif %}
-
-    <div class="inline-block">
-        <span>Page</span>
-        <form method="get" class="inline-block">
-            <input type="number" name="p" placeholder="{{ page.number }}"
-                class="pagination-input" />
-        </form>
-        <span>of {{ page.paginator.num_pages }}</span>
-    </div>
-
-    {% if page.has_next %}
-        <a href="?p={{ page.next_page_number }}" class="pagination-button">
-            &gt;
-        </a>
-        <a href="?p={{ page.paginator.num_pages }}" class="pagination-button">
-            &gt;&gt;
-        </a>
-    {% else %}
-        <span class="pagination-button">
-            &gt;
-        </span>
-        <span class="pagination-button">
-            &gt;&gt;
-        </span>
-    {% endif %}
-
-</div>
+{% include '_tags_paginator.html' %}
 
 {% for tag in tags %}
     <h2 class="heading">
@@ -65,5 +23,7 @@
         {% endfor %}
     </ul>
 {% endfor %}
+
+{% include '_tags_paginator.html' %}
 
 {% endblock %}

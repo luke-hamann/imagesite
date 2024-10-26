@@ -60,9 +60,13 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
     return render(request, 'autocomplete.html', context)
 
 
-def detail(request: HttpRequest, image_id: int) -> HttpResponse:
+def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
     """Render the detail page for an individual image"""
     image = get_object_or_404(Image, pk=image_id)
+
+    if (slug != image.slug()):
+        return HttpResponseRedirect(f'/detail/{image_id}/{image.slug()}/')
+
     return render(request, 'detail.html', {'image': image})
 
 
@@ -98,7 +102,25 @@ def upload(request):
         form = ImageForm(request.POST, request.FILES)
 
         if (form.is_valid()):
-            image = form.save()
+            file = request.FILES['file']
+            title: str = form.cleaned_data['title']
+            tagsString: str = form.cleaned_data['tags']
+            description: str = form.cleaned_data['description']
+
+            tagNames = set(tagsString.split())
+
+            image = Image(title=title, file=file, description=description)
+            image.save()
+
+            for tagName in tagNames:
+                tag = Tag.objects.filter(name=tagName).first()
+                if (tag == None):
+                    tag = Tag(name=tagName)
+                    tag.save()
+                image.tags.add(tag.id)
+            
+            image.save()
+
             return HttpResponseRedirect(f'/detail/{image.id}/')
     else:
         tags = Tag.objects.all()
@@ -116,8 +138,22 @@ def edit(request: HttpRequest, image_id: int):
     """Render a form for editing an existing image"""
 
     image = get_object_or_404(Image, pk=image_id)
-    form = ImageForm(instance=image)
-    
+
+    file = image.file
+
+    title = image.title
+    tags = ''.join([tag.name for tag in image.tags.all()])
+    description = image.description
+    print(file)
+    formData = {
+        'file': file,
+        'title': title,
+        'tags': tags,
+        'description': description
+    }
+
+    form = ImageForm(formData)
+
     context = {
         'form': form,
         'editing': True
@@ -131,6 +167,12 @@ def delete(request: HttpRequest, image_id: int):
     image = get_object_or_404(Image, pk=image_id)
 
     if (request.method == "POST"):
+        # Delete tags that are only associated with the image being deleted
+        for tag in image.tags.all():
+            count = Image.objects.filter(tags__id=tag.id).count()
+            if count == 1:
+                tag.delete()
+
         image.delete()
         return HttpResponseRedirect(f'/search/')
     else:
