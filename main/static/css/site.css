@@ -124,11 +124,11 @@
 }
 
 .suggestionItem {
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     user-select: none;
 }
 
-.selectedSuggestion {
+.suggestionItem:hover, .selectedSuggestion {
     background-color: lightgrey;
 }
 
