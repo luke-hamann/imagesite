@@ -22,5 +22,8 @@ class Image(models.Model):
     def slug(self):
         return self.title.strip().lower().replace(' ', '-')
 
+    def tagString(self):
+        return ' '.join([tag.name for tag in self.tags.all()])
+
     def __str__(self):
         return self.title

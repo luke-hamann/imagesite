@@ -14,7 +14,8 @@
     {% endif %}
 </h1>
 
-<form enctype="multipart/form-data" action="{% url 'upload' %}" method="post" class="upload-form">
+<form enctype="multipart/form-data" action="{% url 'upload' %}" method="post"
+    autocomplete="off" class="upload-form">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit" />

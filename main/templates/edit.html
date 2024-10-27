@@ -1,0 +1,24 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    {{ image.title }}
+{% endblock %}
+
+{% block content %}
+<div class="image-theater">
+    <img src="{% url 'image' image.id %}?format=theater" />
+</div>
+
+<div class="limit-width">
+    <h2 class="heading">
+        <input type="text" value="{{ image.title }}" class="heading" />
+    </h2>
+
+    <p class="content">
+        {{ image.date }}
+    </p>
+
+    <input type="text" value="{{ image.tagString }}"/>
+</div>
+
+{% endblock %}

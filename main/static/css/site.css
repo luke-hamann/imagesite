@@ -42,19 +42,29 @@
 
 /* Page Elements */
 
-.heading {
-    padding: 1rem;
+.heading, .content {
+    margin: 1rem;
 }
 
-/* Columns */
-
-.row {
-    display: flex;
+.button {
+    display: inline-block;
+    padding: 0.5rem;
+    border: 1pt solid black;
+    border-radius: 0.3rem;
+    text-decoration: none;
 }
 
-.col {
-    width: 50%;
+.button-red {
+    color: white;
+    background-color: red;
 }
+
+.button-yellow {
+    color: black;
+    background-color: yellow;
+}
+
+/* Forms */
 
 .form {
     padding: 1rem;
@@ -134,6 +144,11 @@
     margin: 0 auto;
     max-width: 100%;
     max-height: 70vh;
+}
+
+.limit-width {
+    max-width: 50rem;
+    margin: 0 auto;
 }
 
 /* Footer */

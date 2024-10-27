@@ -9,29 +9,36 @@
     <img src="{% url 'image' image.id %}?format=theater" />
 </div>
 
-<h2 class="h2">{{ image.title }}</h2>
+<div class="limit-width">
+    <h2 class="heading">{{ image.title }}</h2>
 
-<p>
-    {{ image.date }}
-</p>
-
-<p class="p">
-    <a href="{% url 'delete' image.id %}">
-        Delete
-    </a>
-    <a href="{% url 'edit' image.id %}">
-        Edit
-    </a>
-</p>
-
-{% if image.tags %}
-    <p>
+    <p class="content">
+        {{ image.date }}
+    </p>
+    
+    <p class="content">
+        <b>Tags:</b>
         {% for tag in image.tags.all %}
-            <a href="{% url 'search' %}?q=%23{{ tag.name }}">{{ tag.name }}</a>
+            <a href="{% url 'search' %}?q={{ tag.name }}">{{ tag.name }}</a>
         {% endfor %}
     </p>
-{% endif %}
-
-<p class="p">{{ image.description }}</p>
+    
+    <p class="content">
+        <a href="{% url 'edit' image.id image.slug %}"
+            class="button button-yellow">
+            Edit
+        </a>
+        <a href="{% url 'delete' image.id image.slug %}"
+            class="button button-red">
+            Delete
+        </a>
+    </p>
+    
+    {% if image.description %}
+        <div class="content">
+            {{ image.description|linebreaks }}
+        </div>
+    {% endif %}
+</div>
 
 {% endblock %}

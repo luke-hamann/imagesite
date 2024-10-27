@@ -102,15 +102,22 @@ def upload(request):
         form = ImageForm(request.POST, request.FILES)
 
         if (form.is_valid()):
+            id: int = int(form.cleaned_data['id'])
             file = request.FILES['file']
             title: str = form.cleaned_data['title']
             tagsString: str = form.cleaned_data['tags']
+            tagNames: set[str] = set(tagsString.split())
             description: str = form.cleaned_data['description']
 
-            tagNames = set(tagsString.split())
-
-            image = Image(title=title, file=file, description=description)
-            image.save()
+            if (id == 0):
+                image = Image(title=title, file=file, description=description)
+                image.save()
+            else:
+                image = get_object_or_404(Image, pk=id)
+                image.title = title
+                image.file = file
+                image.description = description
+                image.tags.clear()
 
             for tagName in tagNames:
                 tag = Tag.objects.filter(name=tagName).first()
@@ -121,45 +128,42 @@ def upload(request):
             
             image.save()
 
-            return HttpResponseRedirect(f'/detail/{image.id}/')
+            return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/')
     else:
-        tags = Tag.objects.all()
         form = ImageForm()
+        form.initial['id'] = 0
 
     context = {
-        'form': form,
-        'tags': tags
+        'form': form
     }
 
     return render(request, 'upload.html', context)
 
 
-def edit(request: HttpRequest, image_id: int):
+def edit(request: HttpRequest, image_id: int, slug: str):
     """Render a form for editing an existing image"""
 
     image = get_object_or_404(Image, pk=image_id)
 
-    file = image.file
+    if (slug != image.slug()):
+        return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/edit/')
 
-    title = image.title
-    tags = ''.join([tag.name for tag in image.tags.all()])
-    description = image.description
-    print(file)
-    formData = {
-        'file': file,
-        'title': title,
-        'tags': tags,
-        'description': description
+    data = {
+        'id': image.id,
+        'file': image.file,
+        'title': image.title,
+        'tags': ''.join([tag.name for tag in image.tags.all()]),
+        'description': image.description
     }
 
-    form = ImageForm(formData)
+    form = ImageForm(data)
 
     context = {
-        'form': form,
-        'editing': True
+        'image': image,
+        'form': form
     }
 
-    return render(request, 'upload.html', context)
+    return render(request, 'edit.html', context)
 
 
 def delete(request: HttpRequest, image_id: int):

@@ -1,7 +1,7 @@
 from django import forms
-from .models import Tag, Image
 
 class ImageForm(forms.Form):
+    id = forms.CharField(widget=forms.HiddenInput)
     file = forms.ImageField()
     title = forms.CharField()
     tags = forms.CharField(max_length=1000, required=False)
