@@ -18,7 +18,12 @@
         {{ image.date }}
     </p>
 
-    <input type="text" value="{{ image.tagString }}"/>
+    <p>
+        <label>
+            <b>Tags:</b>
+        </label>
+        <input type="text" value="{{ image.tagString }}"/>
+    </p>
 </div>
 
 {% endblock %}

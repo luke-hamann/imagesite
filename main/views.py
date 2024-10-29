@@ -166,7 +166,7 @@ def edit(request: HttpRequest, image_id: int, slug: str):
     return render(request, 'edit.html', context)
 
 
-def delete(request: HttpRequest, image_id: int):
+def delete(request: HttpRequest, slug: str, image_id: int):
     """Confirm the deletion of an image"""
     image = get_object_or_404(Image, pk=image_id)
 

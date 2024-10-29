@@ -29,11 +29,46 @@
             Edit
         </a>
         <a href="{% url 'delete' image.id image.slug %}"
-            class="button button-red">
+            class="button button-red launch-confirm-delete">
             Delete
         </a>
     </p>
     
+    <dialog class="dialog-confirm-delete">
+        <h2 class="heading">
+            Confirm
+        </h2>
+        <form method="post" action="{% url 'delete' image.id image.slug %}">
+            <input type="hidden" name="csrfmiddlewaretoken"
+                value="{{ csrf_token }}" />
+            <p class="content">
+                Are you sure you want to delete "{{ image.title }}"?
+            </p>
+            <p class="content center">
+                <button type="button"
+                    class="button button-green confirm-delete-cancel">
+                    No
+                </button>
+                <input type="submit" value="Yes" class="button button-red" />
+            </p>
+        </form>
+    </dialog>
+
+    <script>
+        var deleteButton = document.querySelector('.launch-confirm-delete');
+        var deleteDialog = document.querySelector('.dialog-confirm-delete');
+        var deleteCancelButton = document.querySelector('.confirm-delete-cancel');
+
+        deleteButton.addEventListener('click', () => {
+            event.preventDefault();
+            deleteDialog.showModal();
+        });
+
+        deleteCancelButton.addEventListener('click', () => {
+            deleteDialog.close();
+        });
+    </script>
+
     {% if image.description %}
         <div class="content">
             {{ image.description|linebreaks }}
