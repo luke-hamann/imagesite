@@ -13,7 +13,7 @@
         sans-serif;
 }
 
-/* Sticky footer */
+/* Base Layout */
 
 body {
     display: flex;
@@ -25,6 +25,10 @@ main {
     flex-grow: 1;
 }
 
+.footer {
+    padding: 1rem;
+}
+
 /* Text */
 
 .center {
@@ -33,12 +37,12 @@ main {
 
 /* Lists */
 
-.list-unstyled {
-    list-style-type: none;
+.list {
+    padding-left: 2rem;
 }
 
-.inline-block {
-    display: inline-block;
+.list-unstyled {
+    list-style-type: none;
 }
 
 /* Navigation */
@@ -224,10 +228,4 @@ main {
 .limit-width {
     max-width: 50rem;
     margin: 0 auto;
-}
-
-/* Footer */
-
-.footer {
-    padding: 1rem;
 }

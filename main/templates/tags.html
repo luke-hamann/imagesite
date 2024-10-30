@@ -4,28 +4,27 @@
 
 {% block content %}
     <div class="limit-width">
+        <h1 class="heading">All Tags</h1>
 
-        <h1 class="heading">Tags</h1>
-
-        {% include '_tags_paginator.html' %}
+        <p class="content">
+            {{ tags.count }} tag{{ tags.count | pluralize }}
+        </p>
 
         {% for tag in tags %}
             <h2 class="heading">
                 <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
                 ({{ tag.image_set.count }})
             </h2>
-            <ul class="list-unstyled image-list">
-                {% for image in tag.image_set.all %}
-                    <li class="image-list-item">
-                        <a href="{% url 'detail' image.id %}">
-                            <img src="{% url 'image' image.id %}?format=thumbnail" />
-                        </a>
-                    </li>
+            <div class="content">
+                {% for image in tag.image_set.all|slice:"3" %}
+                    <img src="{% url 'image' image.id %}?format=thumbnail" />
                 {% endfor %}
-            </ul>
+                {% if tag.image_set.all.count > 3 %}
+                    <div>
+                        See more...
+                    </div>
+                {% endif %}
+            </div>
         {% endfor %}
-
-        {% include '_tags_paginator.html' %}
-
     </div>
 {% endblock %}

@@ -71,25 +71,10 @@ def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
 
 
 def tags(request):
-    all_tags = Tag.objects.all().order_by('name')
-    paginator = Paginator(all_tags, 10)
-
-    try:
-        page_number = int(request.GET.get('p', 1))
-    except:
-        page_number = 1
-    
-    if (page_number < 1):
-        return HttpResponseRedirect('?p=1')
-    elif (page_number > paginator.num_pages):
-        return HttpResponseRedirect('?p=' + str(paginator.num_pages))
-
-    page = paginator.get_page(page_number)
-    tags = page.object_list
+    tags = Tag.objects.all().order_by('name')
 
     context = {
-        'tags': tags,
-        'page': page
+        'tags': tags
     }
 
     return render(request, 'tags.html', context)
