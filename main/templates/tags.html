@@ -3,27 +3,29 @@
 {% block title %}Tags{% endblock %}
 
 {% block content %}
+    <div class="limit-width">
 
-<h1 class="heading">Tags</h1>
+        <h1 class="heading">Tags</h1>
 
-{% include '_tags_paginator.html' %}
+        {% include '_tags_paginator.html' %}
 
-{% for tag in tags %}
-    <h2 class="heading">
-        <a href="{% url 'search' %}?q={{ tag.name }}">{{ tag.name }}</a>
-        ({{ tag.image_set.count }})
-    </h2>
-    <ul class="list-unstyled image-list">
-        {% for image in tag.image_set.all %}
-            <li class="image-list-item">
-                <a href="{% url 'detail' image.id %}">
-                    <img src="{% url 'image' image.id %}?format=thumbnail" />
-                </a>
-            </li>
+        {% for tag in tags %}
+            <h2 class="heading">
+                <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
+                ({{ tag.image_set.count }})
+            </h2>
+            <ul class="list-unstyled image-list">
+                {% for image in tag.image_set.all %}
+                    <li class="image-list-item">
+                        <a href="{% url 'detail' image.id %}">
+                            <img src="{% url 'image' image.id %}?format=thumbnail" />
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
         {% endfor %}
-    </ul>
-{% endfor %}
 
-{% include '_tags_paginator.html' %}
+        {% include '_tags_paginator.html' %}
 
+    </div>
 {% endblock %}

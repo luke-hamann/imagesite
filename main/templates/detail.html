@@ -19,7 +19,7 @@
     <p class="content">
         <b>Tags:</b>
         {% for tag in image.tags.all %}
-            <a href="{% url 'search' %}?q={{ tag.name }}">{{ tag.name }}</a>
+            <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
         {% endfor %}
     </p>
     

@@ -187,15 +187,22 @@ def delete(request: HttpRequest, slug: str, image_id: int):
 def search(request):
     query = request.GET.get('q', '')
 
+    page_number = int(request.GET.get('p', 1))
     try:
         page = int(request.GET.get('p', 1))
     except:
         page = 1
 
     tokens = query.split()
-    positiveTokens = filter(lambda t : not t.startswith('-'), tokens)
-    negativeTokens = filter(lambda t : t.startswith('-'), tokens)
 
+    positiveFilter = lambda token: not token.startswith('-')
+    negativeFilter = lambda token: token.startswith('-')
+
+    positiveTokens = filter(positiveFilter, tokens)
+    negativeTokens = filter(negativeFilter, tokens)
+    negativeTokens = map(lambda token: token[1:], negativeTokens)
+
+    # Build the database query
     images = Image.objects.all()
 
     for token in positiveTokens:
@@ -204,9 +211,17 @@ def search(request):
     for token in negativeTokens:
         images = images.exclude(tags__name=token)
 
+    images = images.order_by('title')
+
+    # Paginate the data
+    paginator = Paginator(images, 2)
+    page = paginator.get_page(page_number)
+    images = page.object_list
+
     context = {
         'query': query,
         'images': images,
+        'page': page,
     }
 
     return render(request, 'search.html', context)

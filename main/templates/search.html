@@ -1,41 +1,52 @@
 {% extends '_base.html' %}
 
-{% block title %}Search{% endblock %}
+{% block title %}Image Site{% endblock %}
 
 {% block content %}
-<h1 class="heading">
-    Search
-</h1>
-
-<form action="." method="get">
-    <div>
-        <input type="search" name="q" value="{{ query }}" />
-        <input type="submit" value="Search" />
+    <div class="limit-width">
+        <h1 class="heading center">
+            Image Site
+        </h1>
+        <form action="." method="get">
+            <input type="search" name="q" value="{{ query }}" autocomplete="off"
+                placeholder="Search" class="search-box" autofocus />
+        </form>
+        <div class="content">
+            <span>Page:</span>
+            {% for i in page.paginator.page_range %}
+                <a href="?q={{ query }}&p={{ i }}" class="button">
+                    {{ i }}
+                </a>
+            {% endfor %}
+        </div>
+        <div class="search-result-list">
+            {% for image in images %}
+                <div class="search-result">
+                    <a href="{% url 'detail' image.id image.slug %}">
+                        <img src="{% url 'image' image.id %}?format=thumbnail"
+                            loading="lazy" class="search-result-image" /></a>
+                    <div class="search-result-description">
+                        <div>
+                            <a href="{% url 'detail' image.id image.slug %}">
+                                {{ image.title }}
+                            </a>
+                        </div>
+                        <div>
+                            {% for tag in image.tags.all %}
+                                <a href="?q={{ tag.name }}">{{ tag.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="content">
+            <span>Page:</span>
+            {% for i in page.paginator.page_range %}
+                <a href="?q={{ query }}&p={{ i }}" class="button">
+                    {{ i }}
+                </a>
+            {% endfor %}
+        </div>
     </div>
-    <div>
-        {{ images.count }} image{{ images.count | pluralize }}
-    </div>
-    <table>
-        {% for image in images %}
-            <tr>
-                <td>
-                    <a href="{% url 'detail' image.id %}">
-                        <img src="{% url 'image' image.id %}?format=thumbnail" loading="lazy" />
-                    </a>
-                </td>
-                <td>
-                    <h3>
-                        {{ image.title }}
-                    </h3>
-                    <p>
-                        {% for tag in image.tags.all %}
-                            <span>{{ tag.name }}</span>
-                        {% endfor %}
-                    </p>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
-
-</form>
 {% endblock %}
