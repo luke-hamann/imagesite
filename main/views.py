@@ -80,6 +80,26 @@ def tags(request):
     return render(request, 'tags.html', context)
 
 
+def clearTags(image: Image):
+    """Remove all tags from a given image"""
+    for tag in image.tags.all():
+        count = Image.objects.filter(tags__id=tag.id).count()
+        if count == 1:
+            tag.delete()
+
+
+def addTags(image: Image, tagNames: list[str]):
+    """Add tags to a given image"""
+    clearTags(image)
+
+    for tagName in tagNames:
+        tag = Tag.objects.filter(name=tagName).first()
+        if (tag == None):
+            tag = Tag(name=tagName)
+            tag.save()
+        image.tags.add(tag.id)
+
+
 def upload(request):
     """Render the form for uploading images or accept an upload request"""
 
@@ -128,6 +148,27 @@ def upload(request):
 def edit(request: HttpRequest, image_id: int, slug: str):
     """Render a form for editing an existing image"""
 
+    if (request.method == 'POST'):
+        id = request.POST.get('id')
+        title = request.POST.get('title')
+        tags = request.POST.get('tags').split()
+        description = request.POST.get('description')
+        file = request.FILES.get('file')
+        print(file)
+        image = get_object_or_404(Image, pk=id)
+
+        image.title = title
+        addTags(image, tags)
+        image.file = file
+        image.description = description
+
+        if (file != None):
+            image.file = file
+
+        image.save()
+
+        return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/')
+
     image = get_object_or_404(Image, pk=image_id)
 
     if (slug != image.slug()):
@@ -156,14 +197,9 @@ def delete(request: HttpRequest, slug: str, image_id: int):
     image = get_object_or_404(Image, pk=image_id)
 
     if (request.method == "POST"):
-        # Delete tags that are only associated with the image being deleted
-        for tag in image.tags.all():
-            count = Image.objects.filter(tags__id=tag.id).count()
-            if count == 1:
-                tag.delete()
-
+        clearTags(image)
         image.delete()
-        return HttpResponseRedirect(f'/search/')
+        return HttpResponseRedirect('/')
     else:
         context = {'image': image}
         return render(request, 'delete.html', context)

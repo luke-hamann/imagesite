@@ -17,7 +17,9 @@
             </h2>
             <div class="content">
                 {% for image in tag.image_set.all|slice:"3" %}
-                    <img src="{% url 'image' image.id %}?format=thumbnail" />
+                    <a href="{% url 'detail' image.id image.slug %}">
+                        <img src="{% url 'image' image.id %}?format=thumbnail" />
+                    </a>
                 {% endfor %}
                 {% if tag.image_set.all.count > 3 %}
                     <div>

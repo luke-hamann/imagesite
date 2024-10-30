@@ -1,15 +1,25 @@
 (() => {
-    var input_element = document.querySelector('[name=file]');
+    var fileInputElement = document.querySelector('[name=file]');
 
-    // Create the preview image element
-    var preview_image = document.createElement('img');
-    preview_image.id = 'upload-form-image-preview'
-    input_element.insertAdjacentElement('afterEnd', preview_image);
+    // Select or create the preview image element
+    var previewImage = document.querySelector('.image-preview');
+    var initialSource;
+    if (previewImage) {
+        initialSource = previewImage.src;
+    } else {
+        initialSource = '';
+        previewImage = document.createElement('img');
+        previewImage.classList.add('image-preview');
+        fileInputElement.insertAdjacentElement('afterEnd', previewImage);
+    }
 
-    input_element.addEventListener('change', () => {
-        var [file] = input_element.files;
+    // Change the preview image on a file change
+    fileInputElement.addEventListener('change', () => {
+        var [file] = fileInputElement.files;
         if (file) {
-            preview_image.src = URL.createObjectURL(file);
+            previewImage.src = URL.createObjectURL(file);
+        } else {
+            previewImage.src = initialSource;
         }
     });
 })()

@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load static %}
 
 {% block title %}
     {{ image.title }}
@@ -6,24 +7,46 @@
 
 {% block content %}
 <div class="image-theater">
-    <img src="{% url 'image' image.id %}?format=theater" />
+    <img src="{% url 'image' image.id %}?format=theater"
+        class="image-preview" />
 </div>
 
-<div class="limit-width">
+<form enctype="multipart/form-data" method="post" class="limit-width">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+    <input type="hidden" name="id" value="{{ image.id }}" />
     <h2 class="heading">
-        <input type="text" value="{{ image.title }}" class="heading" />
+        <input type="text" name="title" value="{{ image.title }}" required
+            class="input input-big full-width" />
     </h2>
-
-    <p class="content">
+    <div class="content">
         {{ image.date }}
-    </p>
-
-    <p>
-        <label>
-            <b>Tags:</b>
+    </div>
+    <div class="content">
+        <input type="file" name="file" id="file" />
+    </div>
+    <div class="content">
+        <label for="tags" class="block">
+            Tags:
         </label>
-        <input type="text" value="{{ image.tagString }}"/>
-    </p>
-</div>
+        <input type="text" name="tags" value="{{ image.tagString }}" id="tags"
+            class="input full-width" required />
+    </div>
+    <div class="content">
+        <label for="description" class="block">
+            Description:
+        </label>
+        <textarea name="description" rows="10" class="input textarea full-width"
+            id="description">{{ image.description }}</textarea>
+    </div>
+    <div class="content center">
+        <input type="submit" value="Save" class="button button-green" />
+        <a href=".." class="button button-blue">
+            Cancel
+        </a>
+    </div>
+</form>
+
+<script src="{% static 'js/preview_image.js' %}"></script>
+<script src="{% static 'js/autocomplete.js' %}"></script>
 
 {% endblock %}

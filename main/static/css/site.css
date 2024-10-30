@@ -35,6 +35,10 @@ main {
     text-align: center;
 }
 
+.block {
+    display: block;
+}
+
 /* Lists */
 
 .list {
@@ -72,6 +76,7 @@ main {
 
 .button {
     display: inline-block;
+    font-size: medium;
     padding: 0.5rem;
     border-radius: 0.3rem;
     text-decoration: none;
@@ -93,10 +98,33 @@ main {
     background-color: green;
 }
 
+.button-blue {
+    color: black;
+    background-color: lightskyblue;
+}
+
 /* Forms */
 
 .form {
     padding: 1rem;
+}
+
+.input {
+    margin: 1rem 0 0;
+    padding: 1rem;
+}
+
+.input-big {
+    font-size: large;
+    font-weight: bold;
+}
+
+.textarea {
+    resize: vertical;
+}
+
+.full-width {
+    width: 100%;
 }
 
 /* Image List */
@@ -147,38 +175,35 @@ main {
 
 /* Upload Form */
 
-.upload-form {
-    padding: 1rem;
-    margin: 0 auto;
-    max-width: 30rem;
-}
-
-.upload-form label, .upload-form input, .upload-form select, .upload-form textarea {
+.form-upload label,
+.form-upload input,
+.form-upload select,
+.form-upload textarea {
     display: block;
     padding: 1rem;
     width: 100%;
 }
 
-.upload-form label {
+.form-upload label {
     margin-top: 1rem;
 }
 
-.upload-form label:first-of-type {
+.form-upload label:first-of-type {
     margin-top: 0;
 }
 
-.upload-form textarea {
+.form-upload textarea {
     resize: vertical;
 }
 
-#upload-form-image-preview {
+.form-upload .image-preview {
     display: block;
     margin: 0 auto;
     max-width: 100%;
     max-height: 80vh;
 }
 
-.upload-form input[type=submit] {
+.form-upload input[type=submit] {
     margin-top: 1rem;
 }
 

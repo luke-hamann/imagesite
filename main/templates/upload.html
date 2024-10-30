@@ -6,21 +6,17 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="heading">
-    {% if editing %}
-        Edit
-    {% else %}
-        Upload
-    {% endif %}
-</h1>
+    <h1 class="heading">Upload</h1>
 
-<form enctype="multipart/form-data" action="{% url 'upload' %}" method="post"
-    autocomplete="off" class="upload-form">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form>
+    <form enctype="multipart/form-data" action="{% url 'upload' %}" method="post"
+        autocomplete="off" class="form form-upload limit-width">
+        {% csrf_token %}
+        {{ form }}
+        <div>
+            <input type="submit" value="Upload" class="button button-blue" />
+        </div>
+    </form>
 
-<script src="{% static 'js/preview_image.js' %}"></script>
-<script src="{% static 'js/autocomplete.js' %}"></script>
+    <script src="{% static 'js/preview_image.js' %}"></script>
+    <script src="{% static 'js/autocomplete.js' %}"></script>
 {% endblock %}
