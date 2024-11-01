@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/site.css' %}" />
+    <script>
+        const CSRF_TOKEN = '{{ csrf_token }}';
+    </script>
 </head>
 <body>
     <header>
@@ -14,7 +17,7 @@
             <ul class="list-unstyled navbar-list">
                 <li>
                     <a href="{% url 'home' %}" class="navbar-link">
-                        Home
+                        Search
                     </a>
                 </li>
                 <li>
