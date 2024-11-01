@@ -1,5 +1,5 @@
 (() => {
-    var inputElement = document.querySelector('[name=tags]');
+    var inputElement = document.querySelector('.search-box');
     var autocompleteTimeout;
     var currentValue = inputElement.value;
     var selectedIndex = -1;
@@ -20,7 +20,7 @@
             // Recreate the selection list if necessary
             var parser = new DOMParser();
             var dom = parser.parseFromString(text, 'text/html');
-            suggestionList = dom.querySelector('#suggestionList');
+            var suggestionList = dom.querySelector('#suggestionList');
             var count = Number(suggestionList.getAttribute('data-count'));
 
             if (count == 0) return;

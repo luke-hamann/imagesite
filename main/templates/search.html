@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load static %}
 
 {% block title %}Image Site{% endblock %}
 
@@ -7,18 +8,62 @@
         <h1 class="heading center">
             Image Site
         </h1>
-        <form action="." method="get">
+        <form action="." method="get" class="content">
             <input type="search" name="q" value="{{ query }}" autocomplete="off"
                 placeholder="Search" class="search-box" autofocus />
+            <details class="content">
+                <summary>Advanced</summary>
+                <div class="content">
+                    <span class="inline-block width-10">
+                        Search tags:
+                    </span>
+                    <input type="radio" name="include_tags" value="on"
+                    {% if include_tags %} checked {% endif %} />
+                    <label>yes</label>
+                    <input type="radio" name="include_tags" value="off"
+                        {% if not include_tags %} checked {% endif %} />
+                    <label>no</label>
+                </div>
+                <div class="content">
+                    <span class="inline-block width-10">
+                        Search titles:
+                    </span>
+                    <input type="radio" name="include_titles" value="on"
+                        {% if include_titles %} checked {% endif %} />
+                    <label>yes</label>
+                    <input type="radio" name="include_titles" value="off"
+                        {% if not include_titles %} checked {% endif %} />
+                    <label>no</label>
+                </div>
+                <div class="content">
+                    <span class="inline-block width-10">
+                        Search descriptions:
+                    </span>
+                    <input type="radio" name="include_descriptions" value="on"
+                        {% if include_descriptions %} checked {% endif %} />
+                    <label>yes</label>
+                    <input type="radio" name="include_descriptions" value="off"
+                        {% if not include_descriptions %} checked {% endif %} />
+                    <label>no</label>
+                </div>
+                <div class="content">
+                    <input type="submit" value="Go" class="button" />
+                </div>
+            </details>
         </form>
         <div class="content">
-            <span>Page:</span>
-            {% for i in page.paginator.page_range %}
-                <a href="?q={{ query }}&p={{ i }}" class="button">
-                    {{ i }}
-                </a>
-            {% endfor %}
+            {{ images.count }} result{{ images.count | pluralize }}
         </div>
+        {% if page.has_other_pages %}
+            <div class="content">
+                <span>Page:</span>
+                {% for i in page.paginator.page_range %}
+                    <a href="?q={{ query }}&p={{ i }}" class="button">
+                        {{ i }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="search-result-list">
             {% for image in images %}
                 <div class="search-result">
@@ -40,13 +85,17 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="content">
-            <span>Page:</span>
-            {% for i in page.paginator.page_range %}
-                <a href="?q={{ query }}&p={{ i }}" class="button">
-                    {{ i }}
-                </a>
-            {% endfor %}
-        </div>
+        {% if page.has_other_pages %}
+            <div class="content">
+                <span>Page:</span>
+                {% for i in page.paginator.page_range %}
+                    <a href="?q={{ query }}&p={{ i }}" class="button">
+                        {{ i }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
+
+    <script src="{% static 'js/autocomplete.js' %}"></script>
 {% endblock %}

@@ -1,11 +1,22 @@
-import io
+import io, json
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 import PIL.Image
+import torch
+from ram.models import ram_plus
+from ram import inference_ram, get_transform
 from .models import Image, Tag
 from .forms import ImageForm
+
+
+IMAGE_SIZE = 384
+device = torch.device('cpu')
+transform = get_transform(image_size=IMAGE_SIZE)
+model = ram_plus(pretrained='pretrained/ram_plus_swin_large_14m.pth', image_size=IMAGE_SIZE, vit='swin_l')
+model.eval()
+model = model.to(device)
 
 
 def image(request: HttpRequest, image_id: int) -> HttpResponse:
@@ -35,22 +46,26 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
 
 def autocomplete(request: HttpRequest) -> HttpResponse:
     query = request.GET.get('q', '')
-    tokens = query.split(' ')
 
-    last_token = tokens[-1]
+    if (query == ''):
+        suggestions = []
+    else:
+        tokens = query.split(' ')
 
-    tags = Tag.objects
-    tags = tags.filter(~Q(name__in=tokens))
-    tags = tags.filter(name__startswith=last_token)
-    tags = tags[:10]
+        last_token = tokens[-1]
 
-    suggestions = []
-    for tag in tags:
-        name = tag.name
-        diff = len(name) - len(last_token)
-        if (diff > 0):
-            suggestion = name[-diff:]
-            suggestions.append(suggestion)
+        tags = Tag.objects.all()
+        tags = tags.filter(~Q(name__in=tokens))
+        tags = tags.filter(name__startswith=last_token)
+        tags = tags[:7]
+
+        suggestions = []
+        for tag in tags:
+            name = tag.name
+            diff = len(name) - len(last_token)
+            if (diff > 0):
+                suggestion = name[-diff:]
+                suggestions.append(suggestion)
 
     context = {
         'query': query,
@@ -58,6 +73,19 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, 'autocomplete.html', context)
+
+
+def autotag(request: HttpRequest):
+    if (request.method == 'POST'):
+        file = request.FILES['file']
+        image = transform(PIL.Image.open(file)).unsqueeze(0).to(device)
+        result = inference_ram(image, model)
+        tags = [tag.strip().replace(' ', '-') for tag in result[0].split('|')]
+        content = json.dumps(tags)
+
+        return HttpResponse(content, content_type='application/json')
+    else:
+        return Http404()
 
 
 def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
@@ -154,12 +182,11 @@ def edit(request: HttpRequest, image_id: int, slug: str):
         tags = request.POST.get('tags').split()
         description = request.POST.get('description')
         file = request.FILES.get('file')
-        print(file)
+
         image = get_object_or_404(Image, pk=id)
 
         image.title = title
         addTags(image, tags)
-        image.file = file
         image.description = description
 
         if (file != None):
@@ -207,6 +234,9 @@ def delete(request: HttpRequest, slug: str, image_id: int):
 
 def search(request):
     query = request.GET.get('q', '')
+    include_tags = request.GET.get('include_tags', 'on') == 'on'
+    include_titles = request.GET.get('include_titles', 'on') == 'on'
+    include_descriptions = request.GET.get('include_descriptions', 'on') == 'on'
 
     page_number = int(request.GET.get('p', 1))
     try:
@@ -223,16 +253,30 @@ def search(request):
     negativeTokens = filter(negativeFilter, tokens)
     negativeTokens = map(lambda token: token[1:], negativeTokens)
 
-    # Build the database query
+    # Build the result set
     images = Image.objects.all()
 
     for token in positiveTokens:
-        images = images.filter(tags__name=token)
+        databaseQuery = Q()
+        if (include_tags):
+            databaseQuery |= Q(tags__name=token)
+        if (include_titles):
+            databaseQuery |= Q(title__icontains=token)
+        if (include_descriptions):
+            databaseQuery |= Q(description__icontains=token)
+        images = images.filter(databaseQuery)
     
     for token in negativeTokens:
-        images = images.exclude(tags__name=token)
+        databaseQuery = Q()
+        if (include_tags):
+            databaseQuery |= Q(tags__name=token)
+        if (include_titles):
+            databaseQuery |= Q(title__icontains=token)
+        if (include_descriptions):
+            databaseQuery |= Q(description__icontains=token)
+        images = images.exclude(databaseQuery)
 
-    images = images.order_by('title')
+    images = images.distinct().order_by('title')
 
     # Paginate the data
     paginator = Paginator(images, 2)
@@ -241,8 +285,11 @@ def search(request):
 
     context = {
         'query': query,
+        'include_tags': include_tags,
+        'include_titles': include_titles,
+        'include_descriptions': include_descriptions,
         'images': images,
-        'page': page,
+        'page': page
     }
 
     return render(request, 'search.html', context)

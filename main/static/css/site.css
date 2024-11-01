@@ -39,6 +39,10 @@ main {
     display: block;
 }
 
+details {
+    user-select: none;
+}
+
 /* Lists */
 
 .list {
@@ -70,6 +74,14 @@ main {
 
 .heading, .content {
     margin: 1rem;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.width-10 {
+    width: 10rem;
 }
 
 /* Buttons */
@@ -145,8 +157,7 @@ main {
     border-radius: 0.5rem;
     display: block;
     padding: 1rem;
-    margin: 0 1rem;
-    width: calc(100% - 2rem);
+    width: 100%;
 }
 
 .search-result-list {
@@ -171,6 +182,22 @@ main {
 
 .search-result-description {
     padding: 0.5rem;
+}
+
+#suggestionList {
+    background-color: white;
+    border: 1px solid;
+    border-top: none;
+    width: 100%;
+}
+
+.suggestionItem {
+    padding: 0.5rem 1rem;
+    user-select: none;
+}
+
+.suggestionItem:hover, .selectedSuggestion {
+    background-color: lightgrey;
 }
 
 /* Upload Form */
@@ -205,20 +232,6 @@ main {
 
 .form-upload input[type=submit] {
     margin-top: 1rem;
-}
-
-#suggestionList {
-    border: 1px solid;
-    border-top: none;
-}
-
-.suggestionItem {
-    padding: 0.5rem 1rem;
-    user-select: none;
-}
-
-.suggestionItem:hover, .selectedSuggestion {
-    background-color: lightgrey;
 }
 
 /* Confirm Delete Dialog */

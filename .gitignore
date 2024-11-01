@@ -1,6 +1,12 @@
+# Python
 .venv/
 __pycache__/
 
+# Postgre
 .pg_pass
 
+# RAM
+pretrained/
+
+# Application
 images/

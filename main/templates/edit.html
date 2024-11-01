@@ -25,10 +25,10 @@
         <input type="file" name="file" id="file" />
     </div>
     <div class="content">
-        <label for="tags" class="block">
+        <label for="id_tags" class="block">
             Tags:
         </label>
-        <input type="text" name="tags" value="{{ image.tagString }}" id="tags"
+        <input type="text" name="tags" value="{{ image.tagString }}" id="id_tags"
             class="input full-width" required />
     </div>
     <div class="content">
@@ -36,7 +36,7 @@
             Description:
         </label>
         <textarea name="description" rows="10" class="input textarea full-width"
-            id="description">{{ image.description }}</textarea>
+            id="id_description">{{ image.description }}</textarea>
     </div>
     <div class="content center">
         <input type="submit" value="Save" class="button button-green" />
@@ -46,7 +46,6 @@
     </div>
 </form>
 
-<script src="{% static 'js/preview_image.js' %}"></script>
 <script src="{% static 'js/autocomplete.js' %}"></script>
 
 {% endblock %}
