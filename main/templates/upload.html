@@ -6,13 +6,14 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="heading">Upload</h1>
-
-    <form enctype="multipart/form-data" action="{% url 'upload' %}" method="post"
-        autocomplete="off" class="form form-upload limit-width">
+    <form enctype="multipart/form-data" action="{% url 'upload' %}"
+        method="post" autocomplete="off" class="form form-upload">
+        <h1 class="heading center">
+            Upload
+        </h1>
         {% csrf_token %}
         {{ form }}
-        <div>
+        <div class="center">
             <input type="submit" value="Upload" class="button button-blue" />
         </div>
     </form>

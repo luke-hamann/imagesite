@@ -10,23 +10,14 @@
             {{ tags.count }} tag{{ tags.count | pluralize }}
         </p>
 
-        {% for tag in tags %}
-            <h2 class="heading">
-                <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
-                ({{ tag.image_set.count }})
-            </h2>
-            <div class="content">
-                {% for image in tag.image_set.all|slice:"3" %}
-                    <a href="{% url 'detail' image.id image.slug %}">
-                        <img src="{% url 'image' image.id %}?format=thumbnail" />
-                    </a>
+        {% if tags.count > 0 %}
+            <ul class="content list-unstyled columns">
+                {% for tag in tags %}
+                    <li>
+                        <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
+                    </li>
                 {% endfor %}
-                {% if tag.image_set.all.count > 3 %}
-                    <div>
-                        See more...
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

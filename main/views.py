@@ -1,22 +1,31 @@
 import io, json
+
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
+
 import PIL.Image
+
 import torch
 from ram.models import ram_plus
 from ram import inference_ram, get_transform
+
 from .models import Image, Tag
 from .forms import ImageForm
 
+ENABLE_AUTOTAGGING = False
+SEARCH_RESULTS_PER_PAGE = 5
 
-IMAGE_SIZE = 384
-device = torch.device('cpu')
-transform = get_transform(image_size=IMAGE_SIZE)
-model = ram_plus(pretrained='pretrained/ram_plus_swin_large_14m.pth', image_size=IMAGE_SIZE, vit='swin_l')
-model.eval()
-model = model.to(device)
+
+if ENABLE_AUTOTAGGING:
+    IMAGE_SIZE = 384
+    device = torch.device('cpu')
+    transform = get_transform(image_size=IMAGE_SIZE)
+    model = ram_plus(pretrained='pretrained/ram_plus_swin_large_14m.pth', image_size=IMAGE_SIZE, vit='swin_l')
+    model.eval()
+    model = model.to(device)
 
 
 def image(request: HttpRequest, image_id: int) -> HttpResponse:
@@ -35,8 +44,10 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
     match format:
         case 'thumbnail':
             im.thumbnail((128, 128))
+        case 'search':
+            im.thumbnail((256, 256))
         case 'theater':
-            im.thumbnail((1920, 1920))
+            im.thumbnail((1080, 1080))
 
     im.save(buffer, file_extension)
     content = buffer.getvalue()
@@ -53,6 +64,8 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
         tokens = query.split(' ')
 
         last_token = tokens[-1]
+        if (last_token.startswith('-')):
+            last_token = last_token[1:]
 
         tags = Tag.objects.all()
         tags = tags.filter(~Q(name__in=tokens))
@@ -77,10 +90,13 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
 
 def autotag(request: HttpRequest):
     if (request.method == 'POST'):
-        file = request.FILES['file']
-        image = transform(PIL.Image.open(file)).unsqueeze(0).to(device)
-        result = inference_ram(image, model)
-        tags = [tag.strip().replace(' ', '-') for tag in result[0].split('|')]
+        if (ENABLE_AUTOTAGGING):
+            file = request.FILES['file']
+            image = transform(PIL.Image.open(file)).unsqueeze(0).to(device)
+            result = inference_ram(image, model)
+            tags = [tag.strip().replace(' ', '-') for tag in result[0].split('|')]
+        else:
+            tags = []
         content = json.dumps(tags)
 
         return HttpResponse(content, content_type='application/json')
@@ -99,12 +115,9 @@ def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
 
 
 def tags(request):
+    """Display a page listing all tags"""
     tags = Tag.objects.all().order_by('name')
-
-    context = {
-        'tags': tags
-    }
-
+    context = {'tags': tags}
     return render(request, 'tags.html', context)
 
 
@@ -233,16 +246,18 @@ def delete(request: HttpRequest, slug: str, image_id: int):
 
 
 def search(request):
-    query = request.GET.get('q', '')
-    include_tags = request.GET.get('include_tags', 'on') == 'on'
-    include_titles = request.GET.get('include_titles', 'on') == 'on'
-    include_descriptions = request.GET.get('include_descriptions', 'on') == 'on'
 
-    page_number = int(request.GET.get('p', 1))
+    # Get the search parameters
+    query: str = request.GET.get('q', '')
+    include_tags: str = request.GET.get('include_tags', 'on')
+    include_titles: str = request.GET.get('include_titles', 'on')
+    include_descriptions: str = request.GET.get('include_descriptions', 'on')
+    sort_by: str = request.GET.get('sort_by', 'date')
+
     try:
-        page = int(request.GET.get('p', 1))
+        page_number = int(request.GET.get('p', 1))
     except:
-        page = 1
+        page_number = 1
 
     tokens = query.split()
 
@@ -256,6 +271,7 @@ def search(request):
     # Build the result set
     images = Image.objects.all()
 
+    # Add positive filters
     for token in positiveTokens:
         databaseQuery = Q()
         if (include_tags):
@@ -266,29 +282,35 @@ def search(request):
             databaseQuery |= Q(description__icontains=token)
         images = images.filter(databaseQuery)
     
+    # Add negative filters
     for token in negativeTokens:
         databaseQuery = Q()
-        if (include_tags):
+        if (include_tags == 'on'):
             databaseQuery |= Q(tags__name=token)
-        if (include_titles):
+        if (include_titles == 'on'):
             databaseQuery |= Q(title__icontains=token)
-        if (include_descriptions):
+        if (include_descriptions == 'on'):
             databaseQuery |= Q(description__icontains=token)
         images = images.exclude(databaseQuery)
 
-    images = images.distinct().order_by('title')
+    images = images.distinct()
+
+    # Add sorting
+    if (sort_by == 'title'):
+        images = images.order_by(Lower('title'))
+    elif (sort_by == 'date'):
+        images = images.order_by('date')
 
     # Paginate the data
-    paginator = Paginator(images, 2)
+    paginator = Paginator(images, SEARCH_RESULTS_PER_PAGE)
     page = paginator.get_page(page_number)
-    images = page.object_list
 
     context = {
         'query': query,
         'include_tags': include_tags,
         'include_titles': include_titles,
         'include_descriptions': include_descriptions,
-        'images': images,
+        'sort_by': sort_by,
         'page': page
     }
 

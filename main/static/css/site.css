@@ -84,6 +84,34 @@ details {
     width: 10rem;
 }
 
+/* Margin */
+
+.margin-top {
+    margin-top: 1rem;
+}
+
+.margin-bottom {
+    margin-bottom: 1rem;
+}
+
+/* Columns */
+
+.columns {
+    columns: 1;
+}
+
+@media (min-width: 30rem) {
+    .columns {
+        columns: 2;
+    }
+}
+
+@media (min-width: 50rem) {
+    .columns {
+        columns: 3;
+    }
+}
+
 /* Buttons */
 
 .button {
@@ -93,6 +121,10 @@ details {
     border-radius: 0.3rem;
     text-decoration: none;
     user-select: none;
+}
+
+.button-outline {
+    border: 1pt solid;
 }
 
 .button-red {
@@ -150,7 +182,7 @@ details {
     vertical-align: middle;
 }
 
-/* Search Page */
+/* Search */
 
 .search-box {
     border: 0.1rem solid;
@@ -160,29 +192,45 @@ details {
     width: 100%;
 }
 
-.search-result-list {
+.search-results-item {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    padding: 3rem 0 0;
+    border: 1pt solid;
+    border-radius: 5pt;
+    margin: 1rem;
 }
 
-.search-result {
-    border-radius: 0.5rem;
-    width: fit-content;
+.search-results-item-left {
+    flex: 15rem 1;
 }
 
-.search-result-image {
-    height: 10rem;
-    max-width: 100%;
-    object-fit: cover;
+.search-results-item-right {
+    flex: 30rem 2;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
 }
 
-.search-result-description {
-    padding: 0.5rem;
+.search-results-item-left-image {
+    aspect-ratio: 1 / 1;
+    background-color: black;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
 }
+
+@media (max-width: 30rem) {
+    .search-results-item {
+        flex-direction: column;
+    }
+
+    .search-results-item-right {
+        flex: auto 0 0;
+        height: auto;
+    }
+}
+
+/* Search Suggestions */
 
 #suggestionList {
     background-color: white;
@@ -201,6 +249,11 @@ details {
 }
 
 /* Upload Form */
+
+.form-upload {
+    max-width: 35rem;
+    margin: 0 auto;
+}
 
 .form-upload label,
 .form-upload input,
@@ -232,6 +285,7 @@ details {
 
 .form-upload input[type=submit] {
     margin-top: 1rem;
+    width: fit-content;
 }
 
 /* Confirm Delete Dialog */
