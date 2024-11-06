@@ -1,8 +1,8 @@
 import io, json
 
 from django.core.paginator import Paginator
-from django.db.models import Q
-from django.db.models.functions import Lower
+from django.db.models import Case, CharField, Q, Value, When
+from django.db.models.functions import Lower, Substr
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 
@@ -23,7 +23,8 @@ if ENABLE_AUTOTAGGING:
     IMAGE_SIZE = 384
     device = torch.device('cpu')
     transform = get_transform(image_size=IMAGE_SIZE)
-    model = ram_plus(pretrained='pretrained/ram_plus_swin_large_14m.pth', image_size=IMAGE_SIZE, vit='swin_l')
+    model = ram_plus(pretrained='pretrained/ram_plus_swin_large_14m.pth',
+        image_size=IMAGE_SIZE, vit='swin_l')
     model.eval()
     model = model.to(device)
 
@@ -253,6 +254,7 @@ def search(request):
     include_titles: str = request.GET.get('include_titles', 'on')
     include_descriptions: str = request.GET.get('include_descriptions', 'on')
     sort_by: str = request.GET.get('sort_by', 'date')
+    reverse_sort: str = request.GET.get('reverse_sort', 'on')
 
     try:
         page_number = int(request.GET.get('p', 1))
@@ -297,9 +299,37 @@ def search(request):
 
     # Add sorting
     if (sort_by == 'title'):
-        images = images.order_by(Lower('title'))
+        """
+        SELECT *,
+            CASE
+                WHEN LOWER(title) LIKE 'a %' THEN SUBSTRING(LOWER(title), 3)
+                WHEN LOWER(title) LIKE 'an %' THEN SUBSTRING(LOWER(title), 4)
+                WHEN LOWER(title) LIKE 'the %' THEN SUBSTRING(LOWER(title), 5)
+                ELSE LOWER(title)
+            END title_normalized
+        FROM public.main_image
+        ORDER BY title_normalized
+        """
+
+        images = images.annotate(
+            title_normalized=Case(
+                When(title__istartswith='a ',
+                     then=Lower(Substr('title', 3))),
+                When(title__istartswith='an ',
+                     then=Lower(Substr('title', 4))),
+                When(title__istartswith='the ',
+                     then=Lower(Substr('title', 5))),
+                default=Lower('title')
+            )
+        )
+
+        images = images.order_by('title_normalized')
     elif (sort_by == 'date'):
         images = images.order_by('date')
+
+    # Reverse sort
+    if (reverse_sort == 'on'):
+        images = images.reverse()
 
     # Paginate the data
     paginator = Paginator(images, SEARCH_RESULTS_PER_PAGE)
@@ -311,6 +341,7 @@ def search(request):
         'include_titles': include_titles,
         'include_descriptions': include_descriptions,
         'sort_by': sort_by,
+        'reverse_sort': reverse_sort,
         'page': page
     }
 

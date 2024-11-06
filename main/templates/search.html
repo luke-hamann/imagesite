@@ -58,12 +58,23 @@
                     <span class="inline-block width-10">
                         Sort by:
                     </span>
-                    <input type="radio" name="sort_by" value="title"
-                        {% if sort_by == 'title' %} checked {% endif %} />
-                    <label>title</label>
                     <input type="radio" name="sort_by" value="date"
                         {% if sort_by == 'date' %} checked {% endif %} />
                     <label>date</label>
+                    <input type="radio" name="sort_by" value="title"
+                        {% if sort_by == 'title' %} checked {% endif %} />
+                    <label>title</label>
+                </div>
+                <div class="content">
+                    <span class="inline-block width-10">
+                        Reverse sort:
+                    </span>
+                    <input type="radio" name="reverse_sort" value="on"
+                        {% if reverse_sort == 'on' %} checked {% endif %} />
+                    <label>yes</label>
+                    <input type="radio" name="reverse_sort" value="off"
+                        {% if reverse_sort == 'off' %} checked {% endif %} />
+                    <label>no</label>
                 </div>
                 <div class="content">
                     <input type="submit" value="Go" class="button button-green" />
