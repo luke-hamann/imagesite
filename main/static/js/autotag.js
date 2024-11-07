@@ -1,23 +1,11 @@
 (() => {
-    var fileInputElement = document.querySelector('[name=file]');
-    var tagsInputElement = document.querySelector('[name=tags]')
+    var controller = new AbortController();
 
-    // Select or create the preview image element
-    var previewImage = document.querySelector('.image-preview');
-    var initialSource;
-    if (previewImage) {
-        initialSource = previewImage.src;
-    } else {
-        initialSource = '';
-        previewImage = document.createElement('img');
-        previewImage.classList.add('image-preview');
-        fileInputElement.insertAdjacentElement('afterEnd', previewImage);
-    }
-
-    // Change the preview image on a file change
-    fileInputElement.addEventListener('change', async () => {
+    async function autotagImage() {
         var [file] = fileInputElement.files;
         if (file) {
+            controller.abort();
+            controller = new AbortController();
             previewImage.src = URL.createObjectURL(file);
 
             // Set up the loading icon
@@ -42,6 +30,7 @@
 
             // Post the image
             fetch('/autotag/', {
+                signal: controller.signal,
                 method: 'POST',
                 body: data
             })
@@ -60,5 +49,24 @@
             previewImage.src = initialSource;
             suggestions = '';
         }
-    });
+    }
+
+    // Get the DOM elements
+    var fileInputElement = document.querySelector('[name=file]');
+    var tagsInputElement = document.querySelector('[name=tags]')
+
+    // Select or create the preview image element
+    var previewImage = document.querySelector('.image-preview');
+    var initialSource;
+    if (previewImage) {
+        initialSource = previewImage.src;
+    } else {
+        initialSource = '';
+        previewImage = document.createElement('img');
+        previewImage.classList.add('image-preview');
+        fileInputElement.insertAdjacentElement('afterEnd', previewImage);
+    }
+
+    // Change the preview image on a file change
+    fileInputElement.addEventListener('change', autotagImage);
 })()
