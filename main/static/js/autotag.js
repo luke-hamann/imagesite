@@ -26,7 +26,7 @@
             label.appendChild(loadingIndicator);
             var state = 0;
             var icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
-            setInterval(() => {
+            var interval = setInterval(() => {
                 loadingIndicator.innerText = ' ' + icons[state];
                 state++;
                 state %= icons.length;
@@ -47,7 +47,13 @@
             })
             .then(response => response.json())
             .then(json => {
+                if (tagsInputElement.value != '') {
+                    tagsInputElement.value += ' ';
+                }
                 tagsInputElement.value += json.join(' ');
+            })
+            .finally(() => {
+                clearInterval(interval);
                 loadingIndicator.remove();
             });
         } else {

@@ -15,8 +15,8 @@ from ram import inference_ram, get_transform
 from .models import Image, Tag
 from .forms import ImageForm
 
-ENABLE_AUTOTAGGING = False
-SEARCH_RESULTS_PER_PAGE = 5
+ENABLE_AUTOTAGGING = True
+SEARCH_RESULTS_PER_PAGE = 10
 
 
 if ENABLE_AUTOTAGGING:
@@ -57,6 +57,7 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
 
 
 def autocomplete(request: HttpRequest) -> HttpResponse:
+    """Provide search suggestions based on a query and existing tags"""
     query = request.GET.get('q', '')
 
     if (query == ''):

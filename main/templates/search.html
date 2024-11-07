@@ -13,73 +13,78 @@
         <form action="." method="get" class="content">
             <input type="search" name="q" value="{{ query }}" autocomplete="off"
                 placeholder="Search" class="search-box" autofocus />
-            <details class="margin-top">
-                <summary>Advanced</summary>
-                <div class="content">
-                    <i>
-                        Hint: You can type a hyphen before a search term to
-                        exclude it.
-                    </i>
+            <div class="margin-top center">
+                <input type="submit" value="Go"
+                    class="outline button button-green" />
+                <input type="checkbox" id="toggleAdvanced" />
+                <label for="toggleAdvanced"
+                    class="outline button button-blue">
+                    Advanced
+                </label>
+                <div id="advancedSearch" class="margin-top outline left">
+                    <div class="content">
+                        <i>
+                            Hint: You can type a hyphen before a search term to
+                            exclude it.
+                        </i>
+                    </div>
+                    <div class="content">
+                        <span class="inline-block width-10">
+                            Search titles:
+                        </span>
+                        <input type="radio" name="include_titles" value="on"
+                            {% if include_titles == 'on' %} checked {% endif %} />
+                        <label>yes</label>
+                        <input type="radio" name="include_titles" value="off"
+                            {% if include_titles == 'off' %} checked {% endif %} />
+                        <label>no</label>
+                    </div>
+                    <div class="content">
+                        <span class="inline-block width-10">
+                            Search tags:
+                        </span>
+                        <input type="radio" name="include_tags" value="on"
+                        {% if include_tags == 'on' %} checked {% endif %} />
+                        <label>yes</label>
+                        <input type="radio" name="include_tags" value="off"
+                            {% if include_tags == 'off' %} checked {% endif %} />
+                        <label>no</label>
+                    </div>
+                    <div class="content">
+                        <span class="inline-block width-10">
+                            Search descriptions:
+                        </span>
+                        <input type="radio" name="include_descriptions" value="on"
+                            {% if include_descriptions == 'on' %} checked {% endif %} />
+                        <label>yes</label>
+                        <input type="radio" name="include_descriptions" value="off"
+                            {% if include_descriptions == 'off' %} checked {% endif %} />
+                        <label>no</label>
+                    </div>
+                    <div class="content">
+                        <span class="inline-block width-10">
+                            Sort by:
+                        </span>
+                        <input type="radio" name="sort_by" value="date"
+                            {% if sort_by == 'date' %} checked {% endif %} />
+                        <label>date</label>
+                        <input type="radio" name="sort_by" value="title"
+                            {% if sort_by == 'title' %} checked {% endif %} />
+                        <label>title</label>
+                    </div>
+                    <div class="content">
+                        <span class="inline-block width-10">
+                            Reverse sort:
+                        </span>
+                        <input type="radio" name="reverse_sort" value="on"
+                            {% if reverse_sort == 'on' %} checked {% endif %} />
+                        <label>yes</label>
+                        <input type="radio" name="reverse_sort" value="off"
+                            {% if reverse_sort == 'off' %} checked {% endif %} />
+                        <label>no</label>
+                    </div>
                 </div>
-                <div class="content">
-                    <span class="inline-block width-10">
-                        Search titles:
-                    </span>
-                    <input type="radio" name="include_titles" value="on"
-                        {% if include_titles == 'on' %} checked {% endif %} />
-                    <label>yes</label>
-                    <input type="radio" name="include_titles" value="off"
-                        {% if include_titles == 'off' %} checked {% endif %} />
-                    <label>no</label>
-                </div>
-                <div class="content">
-                    <span class="inline-block width-10">
-                        Search tags:
-                    </span>
-                    <input type="radio" name="include_tags" value="on"
-                    {% if include_tags == 'on' %} checked {% endif %} />
-                    <label>yes</label>
-                    <input type="radio" name="include_tags" value="off"
-                        {% if include_tags == 'off' %} checked {% endif %} />
-                    <label>no</label>
-                </div>
-                <div class="content">
-                    <span class="inline-block width-10">
-                        Search descriptions:
-                    </span>
-                    <input type="radio" name="include_descriptions" value="on"
-                        {% if include_descriptions == 'on' %} checked {% endif %} />
-                    <label>yes</label>
-                    <input type="radio" name="include_descriptions" value="off"
-                        {% if include_descriptions == 'off' %} checked {% endif %} />
-                    <label>no</label>
-                </div>
-                <div class="content">
-                    <span class="inline-block width-10">
-                        Sort by:
-                    </span>
-                    <input type="radio" name="sort_by" value="date"
-                        {% if sort_by == 'date' %} checked {% endif %} />
-                    <label>date</label>
-                    <input type="radio" name="sort_by" value="title"
-                        {% if sort_by == 'title' %} checked {% endif %} />
-                    <label>title</label>
-                </div>
-                <div class="content">
-                    <span class="inline-block width-10">
-                        Reverse sort:
-                    </span>
-                    <input type="radio" name="reverse_sort" value="on"
-                        {% if reverse_sort == 'on' %} checked {% endif %} />
-                    <label>yes</label>
-                    <input type="radio" name="reverse_sort" value="off"
-                        {% if reverse_sort == 'off' %} checked {% endif %} />
-                    <label>no</label>
-                </div>
-                <div class="content">
-                    <input type="submit" value="Go" class="button button-green" />
-                </div>
-            </details>
+            </div>
         </form>
         <div class="content">
             {{ page.paginator.object_list.count }}
