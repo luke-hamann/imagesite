@@ -123,24 +123,22 @@ def tags(request):
     return render(request, 'tags.html', context)
 
 
-def clearTags(image: Image):
-    """Remove all tags from a given image"""
+def setTags(image: Image, tagNames: list[str]):
+    """Set the tags from a given image"""
+
     for tag in image.tags.all():
         count = Image.objects.filter(tags__id=tag.id).count()
         if count == 1:
             tag.delete()
-
-
-def addTags(image: Image, tagNames: list[str]):
-    """Add tags to a given image"""
-    clearTags(image)
-
+    
     for tagName in tagNames:
         tag = Tag.objects.filter(name=tagName).first()
         if (tag == None):
             tag = Tag(name=tagName)
             tag.save()
         image.tags.add(tag.id)
+    
+    image.save()
 
 
 def upload(request):
@@ -150,36 +148,19 @@ def upload(request):
         form = ImageForm(request.POST, request.FILES)
 
         if (form.is_valid()):
-            id: int = int(form.cleaned_data['id'])
             file = request.FILES['file']
             title: str = form.cleaned_data['title']
             tagsString: str = form.cleaned_data['tags']
             tagNames: set[str] = set(tagsString.split())
             description: str = form.cleaned_data['description']
 
-            if (id == 0):
-                image = Image(title=title, file=file, description=description)
-                image.save()
-            else:
-                image = get_object_or_404(Image, pk=id)
-                image.title = title
-                image.file = file
-                image.description = description
-                image.tags.clear()
-
-            for tagName in tagNames:
-                tag = Tag.objects.filter(name=tagName).first()
-                if (tag == None):
-                    tag = Tag(name=tagName)
-                    tag.save()
-                image.tags.add(tag.id)
-            
+            image = Image(file=file, title=title, description=description)
             image.save()
+            setTags(image, tagNames)
 
             return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/')
     else:
         form = ImageForm()
-        form.initial['id'] = 0
 
     context = {
         'form': form
@@ -201,7 +182,7 @@ def edit(request: HttpRequest, image_id: int, slug: str):
         image = get_object_or_404(Image, pk=id)
 
         image.title = title
-        addTags(image, tags)
+        setTags(image, tags)
         image.description = description
 
         if (file != None):
@@ -239,7 +220,7 @@ def delete(request: HttpRequest, slug: str, image_id: int):
     image = get_object_or_404(Image, pk=image_id)
 
     if (request.method == "POST"):
-        clearTags(image)
+        setTags(image, [])
         image.delete()
         return HttpResponseRedirect('/')
     else:
@@ -277,11 +258,11 @@ def search(request):
     # Add positive filters
     for token in positiveTokens:
         databaseQuery = Q()
-        if (include_tags):
+        if (include_tags == 'on'):
             databaseQuery |= Q(tags__name=token)
-        if (include_titles):
+        if (include_titles == 'on'):
             databaseQuery |= Q(title__icontains=token)
-        if (include_descriptions):
+        if (include_descriptions == 'on'):
             databaseQuery |= Q(description__icontains=token)
         images = images.filter(databaseQuery)
     
