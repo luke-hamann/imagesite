@@ -1,7 +1,7 @@
 import io, json
 
 from django.core.paginator import Paginator
-from django.db.models import Case, CharField, Q, Value, When
+from django.db.models import Case, Q, When
 from django.db.models.functions import Lower, Substr
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
