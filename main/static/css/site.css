@@ -1,10 +1,14 @@
 @charset 'utf-8';
 
+/* Reset */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
+/* Colors and Fonts */
 
 :root {
     color-scheme: light dark;

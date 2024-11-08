@@ -1,4 +1,5 @@
 {% extends '_base.html' %}
+{% load static %}
 
 {% block title %}
     {{ image.title }}
@@ -54,26 +55,13 @@
         </form>
     </dialog>
 
-    <script>
-        var deleteButton = document.querySelector('.launch-confirm-delete');
-        var deleteDialog = document.querySelector('.dialog-confirm-delete');
-        var deleteCancelButton = document.querySelector('.confirm-delete-cancel');
-
-        deleteButton.addEventListener('click', () => {
-            event.preventDefault();
-            deleteDialog.showModal();
-        });
-
-        deleteCancelButton.addEventListener('click', () => {
-            deleteDialog.close();
-        });
-    </script>
-
     {% if image.description %}
         <div class="content">
             {{ image.description|linebreaks }}
         </div>
     {% endif %}
+
+    <script src="{% static 'js/deletionDialog.js' %}"></script>
 </div>
 
 {% endblock %}
