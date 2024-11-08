@@ -131,6 +131,8 @@ def setTags(image: Image, tagNames: list[str]):
         if count == 1:
             tag.delete()
     
+    image.tags.clear()
+    
     for tagName in tagNames:
         tag = Tag.objects.filter(name=tagName).first()
         if (tag == None):
