@@ -229,6 +229,7 @@ def delete(request: HttpRequest, slug: str, image_id: int):
 
 
 def search(request):
+    """Process a search query and render the search results"""
 
     # Get the search parameters
     query: str = request.GET.get('q', '')
@@ -281,18 +282,6 @@ def search(request):
 
     # Add sorting
     if (sort_by == 'title'):
-        """
-        SELECT *,
-            CASE
-                WHEN LOWER(title) LIKE 'a %' THEN SUBSTRING(LOWER(title), 3)
-                WHEN LOWER(title) LIKE 'an %' THEN SUBSTRING(LOWER(title), 4)
-                WHEN LOWER(title) LIKE 'the %' THEN SUBSTRING(LOWER(title), 5)
-                ELSE LOWER(title)
-            END title_normalized
-        FROM public.main_image
-        ORDER BY title_normalized
-        """
-
         images = images.annotate(
             title_normalized=Case(
                 When(title__istartswith='a ',
