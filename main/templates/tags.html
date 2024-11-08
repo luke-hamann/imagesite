@@ -1,10 +1,14 @@
 {% extends '_base.html' %}
 
-{% block title %}Tags{% endblock %}
+{% block title %}
+    All Tags
+{% endblock %}
 
 {% block content %}
     <div class="limit-width">
-        <h1 class="margin">All Tags</h1>
+        <h1 class="margin">
+            All Tags
+        </h1>
 
         <p class="margin">
             {{ tags.count }} tag{{ tags.count | pluralize }}
@@ -14,7 +18,8 @@
             <ul class="margin list-unstyled columns">
                 {% for tag in tags %}
                     <li>
-                        <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
+                        <a href="{% url 'home' %}?q={{ tag.name }}"
+                            >{{ tag.name }}</a>
                     </li>
                 {% endfor %}
             </ul>

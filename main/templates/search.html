@@ -1,14 +1,14 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}Image Site{% endblock %}
+{% block title %}
+    Image Site
+{% endblock %}
 
 {% block content %}
     <div class="limit-width">
         <h1 class="margin center">
-            <a href=".">
-                Image Site
-            </a>
+            Image Site
         </h1>
         <form action="." method="get" class="margin">
             <input type="search" name="q" value="{{ query }}" autocomplete="off"
@@ -34,11 +34,17 @@
                         </div>
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="include_titles" value="on"
+                                id="include_titles_yes"
                                 {% if include_titles == 'on' %} checked {% endif %} />
-                            <label>yes</label>
+                            <label for="include_titles_yes">
+                                yes
+                            </label>
                             <input type="radio" name="include_titles" value="off"
+                                id="include_titles_no"
                                 {% if include_titles == 'off' %} checked {% endif %} />
-                            <label>no</label>
+                            <label for="include_titles_no">
+                                no
+                            </label>
                         </div>
                     </div>
                     <div class="margin">
@@ -47,11 +53,17 @@
                         </div>
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="include_tags" value="on"
+                                id="include_tags_yes"
                                 {% if include_tags == 'on' %} checked {% endif %} />
-                            <label>yes</label>
+                            <label for="include_tags_yes">
+                                yes
+                            </label>
                             <input type="radio" name="include_tags" value="off"
+                                id="include_tags_no"
                                 {% if include_tags == 'off' %} checked {% endif %} />
-                            <label>no</label>
+                            <label for="include_tags_no">
+                                no
+                            </label>
                         </div>
                     </div>
                     <div class="margin">
@@ -59,12 +71,18 @@
                             Search descriptions:
                         </div>
                         <div class="inline-block search-advanced-option">
-                            <input type="radio" name="include_descriptions" value="on"
+                            <input type="radio" name="include_descriptions"
+                                value="on" id="include_descriptions_yes"
                                 {% if include_descriptions == 'on' %} checked {% endif %} />
-                            <label>yes</label>
-                            <input type="radio" name="include_descriptions" value="off"
+                            <label for="include_descriptions_yes">
+                                yes
+                            </label>
+                            <input type="radio" name="include_descriptions"
+                                value="off" id="include_descriptions_no"
                                 {% if include_descriptions == 'off' %} checked {% endif %} />
-                            <label>no</label>
+                            <label for="include_descriptions_no">
+                                no
+                            </label>
                         </div>
                     </div>
                     <div class="margin">
@@ -73,11 +91,17 @@
                         </div>
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="sort_by" value="date"
+                                id="sort_by_date"
                                 {% if sort_by == 'date' %} checked {% endif %} />
-                            <label>date</label>
+                            <label for="sort_by_date">
+                                date
+                            </label>
                             <input type="radio" name="sort_by" value="title"
+                                id="sort_by_title"
                                 {% if sort_by == 'title' %} checked {% endif %} />
-                            <label>title</label>
+                            <label for="sort_by_title">
+                                title
+                            </label>
                         </div>
                     </div>
                     <div class="margin">
@@ -86,11 +110,17 @@
                         </div>
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="reverse_sort" value="on"
+                                id="reverse_sort_yes"
                                 {% if reverse_sort == 'on' %} checked {% endif %} />
-                            <label>yes</label>
+                            <label for="reverse_sort_yes">
+                                yes
+                            </label>
                             <input type="radio" name="reverse_sort" value="off"
+                                id="reverse_sort_no"
                                 {% if reverse_sort == 'off' %} checked {% endif %} />
-                            <label>no</label>
+                            <label for="reverse_sort_no">
+                                no
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -123,7 +153,8 @@
                         {% if image.tags.count > 0 %}
                             <p class="margin-top">
                                 {% for tag in image.tags.all %}
-                                    <a href="?q={{ tag.name }}">{{ tag.name }}</a>
+                                    <a href="?q={{ tag.name }}"
+                                        >{{ tag.name }}</a>
                                 {% endfor %}
                             </p>
                         {% endif %}
@@ -138,6 +169,5 @@
         </div>
         {% include './_search_paginator.html' %}
     </div>
-
     <script src="{% static 'js/autocomplete.js' %}"></script>
 {% endblock %}

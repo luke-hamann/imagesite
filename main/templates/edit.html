@@ -6,46 +6,52 @@
 {% endblock %}
 
 {% block content %}
-<div class="image-theater">
-    <img src="{% url 'image' image.id %}?format=theater"
-        class="image-preview" />
-</div>
+    <div class="image-theater">
+        <img src="{% url 'image' image.id %}?format=theater"
+            class="image-preview" />
+    </div>
 
-<form enctype="multipart/form-data" method="post" class="limit-width">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
-    <input type="hidden" name="id" value="{{ image.id }}" />
-    <h2 class="margin">
-        <input type="text" name="title" value="{{ image.title }}" required
-            class="input text-big full-width" />
-    </h2>
-    <div class="margin">
-        {{ image.date }}
-    </div>
-    <div class="margin">
-        <input type="file" name="file" id="file" />
-    </div>
-    <div class="margin">
-        <label for="id_tags" class="block">
-            Tags:
-        </label>
-        <input type="text" name="tags" value="{{ image.tagString }}" id="id_tags"
-            class="input full-width" />
-    </div>
-    <div class="margin">
-        <label for="description" class="block">
-            Description:
-        </label>
-        <textarea name="description" rows="10" class="input textarea full-width"
-            id="id_description">{{ image.description }}</textarea>
-    </div>
-    <div class="margin center">
-        <input type="submit" value="Save" class="button button-green" />
-        <a href=".." class="button button-blue">
-            Cancel
-        </a>
-    </div>
-</form>
+    <form enctype="multipart/form-data" method="post" class="limit-width">
+        <input type="hidden" name="csrfmiddlewaretoken"
+            value="{{ csrf_token }}" />
+        <input type="hidden" name="id" value="{{ image.id }}" />
+        <h2 class="margin">
+            <input type="text" name="title" value="{{ image.title }}" required
+                class="input text-big full-width" />
+        </h2>
+        <div class="margin">
+            {{ image.date }}
+        </div>
+        <div class="margin">
+            <label for="id_file" class="block">
+                File:
+            </label>
+            <input type="file" name="file" accept="image/*" id="id_file"
+                class="margin-top" />
+        </div>
+        <div class="margin">
+            <label for="id_tags" class="block">
+                Tags:
+            </label>
+            <input type="text" name="tags" value="{{ image.tagString }}"
+                id="id_tags" class="input full-width" />
+        </div>
+        <div class="margin">
+            <label for="id_description" class="block">
+                Description:
+            </label>
+            <textarea name="description" rows="10"
+                class="input textarea full-width" id="id_description"
+                >{{ image.description }}</textarea>
+        </div>
+        <div class="margin center">
+            <input type="submit" value="Save"
+                class="button button-green outline" />
+            <a href=".." class="button button-blue outline">
+                Cancel
+            </a>
+        </div>
+    </form>
 
-<script src="{% static 'js/autocomplete.js' %}"></script>
-
+    <script src="{% static 'js/autocomplete.js' %}"></script>
 {% endblock %}

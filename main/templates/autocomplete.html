@@ -1,6 +1,6 @@
 <div id="suggestionList" data-count="{{ suggestions|length }}">
     {% for suggestion in suggestions %}
-        <div class="suggestionItem"
-            data-index="{{ forloop.counter0 }}">{{ query }}<b>{{ suggestion }}</b></div>
+        <div class="suggestionItem" data-index="{{ forloop.counter0 }}"
+            >{{ query }}<b>{{ suggestion }}</b></div>
     {% endfor %}
 </div>

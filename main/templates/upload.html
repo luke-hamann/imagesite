@@ -14,9 +14,9 @@
         {% csrf_token %}
         {{ form }}
         <div class="center margin-top">
-            <input type="submit" value="Upload" class="button button-blue" />
+            <input type="submit" value="Upload"
+                class="button button-blue outline" />
         </div>
     </form>
-
     <script src="{% static 'js/autotag.js' %}"></script>
 {% endblock %}

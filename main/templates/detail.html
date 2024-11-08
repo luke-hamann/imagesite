@@ -6,62 +6,64 @@
 {% endblock %}
 
 {% block content %}
-<div class="image-theater">
-    <img src="{% url 'image' image.id %}?format=theater" />
-</div>
+    <div class="image-theater">
+        <img src="{% url 'image' image.id %}?format=theater" />
+    </div>
 
-<div class="limit-width">
-    <h2 class="margin">{{ image.title }}</h2>
-
-    <p class="margin">
-        {{ image.date }}
-    </p>
-    
-    <p class="margin">
-        <b>Tags:</b>
-        {% for tag in image.tags.all %}
-            <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
-        {% endfor %}
-    </p>
-    
-    <p class="margin">
-        <a href="{% url 'edit' image.id image.slug %}"
-            class="button button-yellow">
-            Edit
-        </a>
-        <a href="{% url 'delete' image.id image.slug %}"
-            class="button button-red launch-confirm-delete">
-            Delete
-        </a>
-    </p>
-    
-    <dialog class="dialog-confirm-delete">
+    <div class="limit-width">
         <h2 class="margin">
-            Confirm
+            {{ image.title }}
         </h2>
-        <form method="post" action="{% url 'delete' image.id image.slug %}">
-            <input type="hidden" name="csrfmiddlewaretoken"
-                value="{{ csrf_token }}" />
-            <p class="margin">
-                Are you sure you want to delete "{{ image.title }}"?
-            </p>
-            <p class="margin center">
-                <input type="submit" value="Yes" class="button button-red" />
-                <button type="button"
-                    class="button button-green confirm-delete-cancel">
-                    No
-                </button>
-            </p>
-        </form>
-    </dialog>
 
-    {% if image.description %}
-        <div class="image-description margin">
-            {{ image.description|linebreaks }}
-        </div>
-    {% endif %}
+        <p class="margin">
+            {{ image.date }}
+        </p>
+        
+        <p class="margin">
+            <b>Tags:</b>
+            {% for tag in image.tags.all %}
+                <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
+            {% endfor %}
+        </p>
+        
+        <p class="margin">
+            <a href="{% url 'edit' image.id image.slug %}"
+                class="button button-yellow outline">
+                Edit
+            </a>
+            <a href="{% url 'delete' image.id image.slug %}"
+                class="button button-red outline launch-confirm-delete">
+                Delete
+            </a>
+        </p>
+        
+        <dialog class="dialog-confirm-delete">
+            <h2 class="margin">
+                Confirm
+            </h2>
+            <form method="post" action="{% url 'delete' image.id image.slug %}">
+                <input type="hidden" name="csrfmiddlewaretoken"
+                    value="{{ csrf_token }}" />
+                <p class="margin">
+                    Are you sure you want to delete "{{ image.title }}"?
+                </p>
+                <p class="margin center">
+                    <input type="submit" value="Yes"
+                        class="button button-red" />
+                    <button type="button"
+                        class="button button-green confirm-delete-cancel">
+                        No
+                    </button>
+                </p>
+            </form>
+        </dialog>
 
-    <script src="{% static 'js/deletionDialog.js' %}"></script>
-</div>
+        {% if image.description %}
+            <div class="image-description margin">
+                {{ image.description|linebreaks }}
+            </div>
+        {% endif %}
 
+        <script src="{% static 'js/deletionDialog.js' %}"></script>
+    </div>
 {% endblock %}

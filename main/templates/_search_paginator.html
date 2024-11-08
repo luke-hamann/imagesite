@@ -3,7 +3,7 @@
         <span>Page:</span>
         {% for i in page.paginator.page_range %}
             <a href="?q={{ query }}&p={{ i }}&include_titles={{ include_titles }}&include_tags={{ include_tags }}&include_descriptions={{ include_descriptions }}&sort_by={{ sort_by }}&reverse_sort={{ reverse_sort }}"
-                class="button outline {% if page.number == i%}button-blue{%  endif %}">
+                class="button outline {% if page.number == i %}button-blue{% endif %}">
                 {{ i }}
             </a>
         {% endfor %}

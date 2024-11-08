@@ -1,29 +1,31 @@
 {% extends '_base.html' %}
 
-{% block title %}Confirm Deletion{% endblock %}
+{% block title %}
+    Confirm Deletion
+{% endblock %}
 
 {% block content %}
-<div class="limit-width center">
-    <h1 class="h1 margin">
-        Confirm Deletion
-    </h1>
-
-    <form method="post" class="margin">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
-        <p>
-            Are you sure you want to delete "{{ image.title }}"?
-        </p>
-        <p class="margin-top">
-            <img src="{% url 'image' image.id %}?format=thumbnail" />
-        </p>
-        <p class="margin-top">
-            <input type="submit" value="Yes"
-                class="button button-red outline" />
-            <a href="{% url 'detail' image.id image.slug %}"
-                class="button button-green outline">
-                No
-            </a>
-        </p>
-    </form>
-</div>
+    <div class="limit-width center">
+        <h1 class="margin">
+            Confirm Deletion
+        </h1>
+        <form method="post" class="margin">
+            <input type="hidden" name="csrfmiddlewaretoken"
+                value="{{ csrf_token }}" />
+            <p>
+                Are you sure you want to delete "{{ image.title }}"?
+            </p>
+            <p class="margin-top">
+                <img src="{% url 'image' image.id %}?format=thumbnail" />
+            </p>
+            <p class="margin-top">
+                <input type="submit" value="Yes"
+                    class="button button-red outline" />
+                <a href="{% url 'detail' image.id image.slug %}"
+                    class="button button-green outline">
+                    No
+                </a>
+            </p>
+        </form>
+    </div>
 {% endblock %}
