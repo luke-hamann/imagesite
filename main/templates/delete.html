@@ -4,11 +4,11 @@
 
 {% block content %}
 <div class="limit-width center">
-    <h1 class="h1 content">
+    <h1 class="h1 margin">
         Confirm Deletion
     </h1>
 
-    <form method="post" class="content">
+    <form method="post" class="margin">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
         <p>
             Are you sure you want to delete "{{ image.title }}"?

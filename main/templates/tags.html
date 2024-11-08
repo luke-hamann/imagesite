@@ -4,14 +4,14 @@
 
 {% block content %}
     <div class="limit-width">
-        <h1 class="heading">All Tags</h1>
+        <h1 class="margin">All Tags</h1>
 
-        <p class="content">
+        <p class="margin">
             {{ tags.count }} tag{{ tags.count | pluralize }}
         </p>
 
         {% if tags.count > 0 %}
-            <ul class="content list-unstyled columns">
+            <ul class="margin list-unstyled columns">
                 {% for tag in tags %}
                     <li>
                         <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>

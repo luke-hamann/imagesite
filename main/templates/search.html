@@ -5,12 +5,12 @@
 
 {% block content %}
     <div class="limit-width">
-        <h1 class="heading center">
+        <h1 class="margin center">
             <a href=".">
                 Image Site
             </a>
         </h1>
-        <form action="." method="get" class="content">
+        <form action="." method="get" class="margin">
             <input type="search" name="q" value="{{ query }}" autocomplete="off"
                 placeholder="Search" class="search-box" autofocus />
             <div class="margin-top center">
@@ -22,71 +22,81 @@
                     Advanced
                 </label>
                 <div id="advancedSearch" class="margin-top outline left">
-                    <div class="content">
+                    <div class="margin">
                         <i>
                             Hint: You can type a hyphen before a search term to
                             exclude it.
                         </i>
                     </div>
-                    <div class="content">
-                        <span class="inline-block width-10">
+                    <div class="margin">
+                        <div class="inline-block search-advanced-option">
                             Search titles:
-                        </span>
-                        <input type="radio" name="include_titles" value="on"
-                            {% if include_titles == 'on' %} checked {% endif %} />
-                        <label>yes</label>
-                        <input type="radio" name="include_titles" value="off"
-                            {% if include_titles == 'off' %} checked {% endif %} />
-                        <label>no</label>
+                        </div>
+                        <div class="inline-block search-advanced-option">
+                            <input type="radio" name="include_titles" value="on"
+                                {% if include_titles == 'on' %} checked {% endif %} />
+                            <label>yes</label>
+                            <input type="radio" name="include_titles" value="off"
+                                {% if include_titles == 'off' %} checked {% endif %} />
+                            <label>no</label>
+                        </div>
                     </div>
-                    <div class="content">
-                        <span class="inline-block width-10">
+                    <div class="margin">
+                        <div class="inline-block search-advanced-option">
                             Search tags:
-                        </span>
-                        <input type="radio" name="include_tags" value="on"
-                        {% if include_tags == 'on' %} checked {% endif %} />
-                        <label>yes</label>
-                        <input type="radio" name="include_tags" value="off"
-                            {% if include_tags == 'off' %} checked {% endif %} />
-                        <label>no</label>
+                        </div>
+                        <div class="inline-block search-advanced-option">
+                            <input type="radio" name="include_tags" value="on"
+                                {% if include_tags == 'on' %} checked {% endif %} />
+                            <label>yes</label>
+                            <input type="radio" name="include_tags" value="off"
+                                {% if include_tags == 'off' %} checked {% endif %} />
+                            <label>no</label>
+                        </div>
                     </div>
-                    <div class="content">
-                        <span class="inline-block width-10">
+                    <div class="margin">
+                        <div class="inline-block search-advanced-option">
                             Search descriptions:
-                        </span>
-                        <input type="radio" name="include_descriptions" value="on"
-                            {% if include_descriptions == 'on' %} checked {% endif %} />
-                        <label>yes</label>
-                        <input type="radio" name="include_descriptions" value="off"
-                            {% if include_descriptions == 'off' %} checked {% endif %} />
-                        <label>no</label>
+                        </div>
+                        <div class="inline-block search-advanced-option">
+                            <input type="radio" name="include_descriptions" value="on"
+                                {% if include_descriptions == 'on' %} checked {% endif %} />
+                            <label>yes</label>
+                            <input type="radio" name="include_descriptions" value="off"
+                                {% if include_descriptions == 'off' %} checked {% endif %} />
+                            <label>no</label>
+                        </div>
                     </div>
-                    <div class="content">
-                        <span class="inline-block width-10">
+                    <div class="margin">
+                        <div class="inline-block search-advanced-option">
                             Sort by:
-                        </span>
-                        <input type="radio" name="sort_by" value="date"
-                            {% if sort_by == 'date' %} checked {% endif %} />
-                        <label>date</label>
-                        <input type="radio" name="sort_by" value="title"
-                            {% if sort_by == 'title' %} checked {% endif %} />
-                        <label>title</label>
+                        </div>
+                        <div class="inline-block search-advanced-option">
+                            <input type="radio" name="sort_by" value="date"
+                                {% if sort_by == 'date' %} checked {% endif %} />
+                            <label>date</label>
+                            <input type="radio" name="sort_by" value="title"
+                                {% if sort_by == 'title' %} checked {% endif %} />
+                            <label>title</label>
+                        </div>
                     </div>
-                    <div class="content">
-                        <span class="inline-block width-10">
+                    <div class="margin">
+                        <div class="inline-block search-advanced-option">
                             Reverse sort:
-                        </span>
-                        <input type="radio" name="reverse_sort" value="on"
-                            {% if reverse_sort == 'on' %} checked {% endif %} />
-                        <label>yes</label>
-                        <input type="radio" name="reverse_sort" value="off"
-                            {% if reverse_sort == 'off' %} checked {% endif %} />
-                        <label>no</label>
+                        </div>
+                        <div class="inline-block search-advanced-option">
+                            <input type="radio" name="reverse_sort" value="on"
+                                {% if reverse_sort == 'on' %} checked {% endif %} />
+                            <label>yes</label>
+                            <input type="radio" name="reverse_sort" value="off"
+                                {% if reverse_sort == 'off' %} checked {% endif %} />
+                            <label>no</label>
+                        </div>
                     </div>
                 </div>
             </div>
         </form>
-        <div class="content">
+        <div class="margin">
             {{ page.paginator.object_list.count }}
             result{{ page.paginator.object_list.count | pluralize }}
         </div>
@@ -95,9 +105,11 @@
             {% for image in page.object_list.all %}
                 <div class="search-results-item">
                     <div class="search-results-item-left">
-                        <a href="{% url 'detail' image.id image.slug %}">
+                        <a href="{% url 'detail' image.id image.slug %}"
+                            class="search-results-item-left-link">
                             <img src="{% url 'image' image.id %}?format=search"
-                                loading="lazy" class="search-results-item-left-image" /></a>
+                                class="search-results-item-left-image"
+                                loading="lazy" /></a>
                     </div>
                     <div class="search-results-item-right">
                         <h2>

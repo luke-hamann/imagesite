@@ -46,7 +46,7 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
         case 'thumbnail':
             im.thumbnail((128, 128))
         case 'search':
-            im.thumbnail((256, 256))
+            im.thumbnail((512, 512))
         case 'theater':
             im.thumbnail((1080, 1080))
 
