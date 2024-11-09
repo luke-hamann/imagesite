@@ -5,6 +5,7 @@ from django.db.models import Case, Q, When
 from django.db.models.functions import Lower, Substr
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 
 import PIL.Image
 
@@ -13,7 +14,8 @@ from ram.models import ram_plus
 from ram import inference_ram, get_transform
 
 from .models import Image, Tag
-from .forms import ImageForm
+from .forms import ImageUploadForm
+
 
 ENABLE_AUTOTAGGING = True
 SEARCH_RESULTS_PER_PAGE = 10
@@ -51,9 +53,9 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
             im.thumbnail((1080, 1080))
 
     im.save(buffer, file_extension)
-    content = buffer.getvalue()
+    im.close()
 
-    return HttpResponse(content, content_type=content_type)
+    return HttpResponse(buffer.getvalue(), content_type=content_type)
 
 
 def autocomplete(request: HttpRequest) -> HttpResponse:
@@ -63,7 +65,7 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
     if (query == ''):
         suggestions = []
     else:
-        tokens = query.split(' ')
+        tokens = query.split()
 
         last_token = tokens[-1]
         if (last_token.startswith('-')):
@@ -90,20 +92,32 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
     return render(request, 'autocomplete.html', context)
 
 
-def autotag(request: HttpRequest):
-    if (request.method == 'POST'):
-        if (ENABLE_AUTOTAGGING):
-            file = request.FILES['file']
-            image = transform(PIL.Image.open(file)).unsqueeze(0).to(device)
-            result = inference_ram(image, model)
-            tags = [tag.strip().replace(' ', '-') for tag in result[0].split('|')]
-        else:
-            tags = []
-        content = json.dumps(tags)
+def autotag(request: HttpRequest) -> HttpResponse:
+    """Generate tags for an image"""
 
-        return HttpResponse(content, content_type='application/json')
-    else:
+    if (request.method != 'POST'):
         return Http404()
+    
+    if (not ENABLE_AUTOTAGGING):
+        tags = []
+    else:
+        file = request.FILES.get('file', None)
+        if (file == None):
+            return Http404()
+        
+        try:
+            image = transform(PIL.Image.open(file)).unsqueeze(0).to(device)
+        except:
+            return Http404()
+        
+        result = inference_ram(image, model)
+        tokens = result[0].split('|')
+        tags = []
+        for token in tokens:
+            tag = token.strip().replace(' ', '-')
+            tags.append(tag)
+
+    return HttpResponse(json.dumps(tags), content_type='application/json')
 
 
 def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
@@ -111,20 +125,20 @@ def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
     image = get_object_or_404(Image, pk=image_id)
 
     if (slug != image.slug()):
-        return HttpResponseRedirect(f'/detail/{image_id}/{image.slug()}/')
+        return HttpResponseRedirect(reverse('detail', kwargs={
+            'image_id': image_id, 'slug': image.slug()
+        }))
 
     return render(request, 'detail.html', {'image': image})
 
 
-def tags(request):
+def tags(request: HttpRequest) -> HttpResponse:
     """Display a page listing all tags"""
-    tags = Tag.objects.all().order_by('name')
-    context = {'tags': tags}
-    return render(request, 'tags.html', context)
+    return render(request, 'tags.html', {'tags': Tag.objects.all()})
 
 
-def setTags(image: Image, tagNames: list[str]):
-    """Set the tags from a given image"""
+def setTags(image: Image, tagNames: list[str]) -> None:
+    """Set the tags for a given image"""
 
     for tag in image.tags.all():
         count = Image.objects.filter(tags__id=tag.id).count()
@@ -143,11 +157,11 @@ def setTags(image: Image, tagNames: list[str]):
     image.save()
 
 
-def upload(request):
+def upload(request: HttpRequest) -> HttpResponse:
     """Render the form for uploading images or accept an upload request"""
 
-    if (request.method == "POST"):
-        form = ImageForm(request.POST, request.FILES)
+    if (request.method == 'POST'):
+        form = ImageUploadForm(request.POST, request.FILES)
 
         if (form.is_valid()):
             file = request.FILES['file']
@@ -160,28 +174,25 @@ def upload(request):
             image.save()
             setTags(image, tagNames)
 
-            return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/')
+            return HttpResponseRedirect(reverse('detail', kwargs={
+                'image_id': image.id, 'slug': image.slug()
+            }))
     else:
-        form = ImageForm()
+        form = ImageUploadForm()
 
-    context = {
-        'form': form
-    }
-
-    return render(request, 'upload.html', context)
+    return render(request, 'upload.html', {'form': form})
 
 
-def edit(request: HttpRequest, image_id: int, slug: str):
-    """Render a form for editing an existing image"""
+def edit(request: HttpRequest, image_id: int, slug: str) -> HttpResponse:
+    """Render a form for editing an image or accept an edit request"""
+
+    image = get_object_or_404(Image, pk=image_id)
 
     if (request.method == 'POST'):
-        id = request.POST.get('id')
         title = request.POST.get('title')
         tags = request.POST.get('tags').split()
         description = request.POST.get('description')
         file = request.FILES.get('file')
-
-        image = get_object_or_404(Image, pk=id)
 
         image.title = title
         setTags(image, tags)
@@ -192,46 +203,38 @@ def edit(request: HttpRequest, image_id: int, slug: str):
 
         image.save()
 
-        return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/')
+        return HttpResponseRedirect(reverse('detail', kwargs={
+            'image_id': image.id, 'slug': image.slug()
+        }))
+
+    if (slug != image.slug()):
+        return HttpResponseRedirect(reverse('edit', kwargs={
+            'image_id': image.id, 'slug': image.slug()
+        }))
+
+    return render(request, 'edit.html', {'image': image})
+
+
+def delete(request: HttpRequest, image_id: int, slug: str) -> HttpResponse:
+    """Confirm or accept the deletion of an image"""
 
     image = get_object_or_404(Image, pk=image_id)
 
     if (slug != image.slug()):
-        return HttpResponseRedirect(f'/detail/{image.id}/{image.slug()}/edit/')
-
-    data = {
-        'id': image.id,
-        'file': image.file,
-        'title': image.title,
-        'tags': ''.join([tag.name for tag in image.tags.all()]),
-        'description': image.description
-    }
-
-    form = ImageForm(data)
-
-    context = {
-        'image': image,
-        'form': form
-    }
-
-    return render(request, 'edit.html', context)
-
-
-def delete(request: HttpRequest, slug: str, image_id: int):
-    """Confirm the deletion of an image"""
-    image = get_object_or_404(Image, pk=image_id)
+        return HttpResponseRedirect(reverse('delete', kwargs={
+            'image_id': image.id, 'slug': image.slug()
+        }))
 
     if (request.method == "POST"):
         setTags(image, [])
         image.delete()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse('home'))
     else:
-        context = {'image': image}
-        return render(request, 'delete.html', context)
+        return render(request, 'delete.html', {'image': image})
 
 
-def search(request):
-    """Process a search query and render the search results"""
+def search(request: HttpRequest) -> HttpResponse:
+    """Process a search query and render the results"""
 
     # Get the search parameters
     query: str = request.GET.get('q', '')
@@ -295,7 +298,6 @@ def search(request):
                 default=Lower('title')
             )
         )
-
         images = images.order_by('title_normalized')
     elif (sort_by == 'date'):
         images = images.order_by('date')

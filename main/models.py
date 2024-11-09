@@ -1,6 +1,9 @@
 from django.db import models
 
+
 class Tag(models.Model):
+    """Represent a tag to categorize an image"""
+
     name = models.CharField(max_length=25)
 
     class Meta:
@@ -13,6 +16,8 @@ class Tag(models.Model):
 
 
 class Image(models.Model):
+    """Represent an image uploaded by a user"""
+
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=1023)
     date = models.DateTimeField(auto_now_add=True)

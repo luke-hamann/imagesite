@@ -1,6 +1,7 @@
 from django import forms
 
-class ImageForm(forms.Form):
+
+class ImageUploadForm(forms.Form):
     file = forms.ImageField()
     title = forms.CharField()
     tags = forms.CharField(widget=forms.Textarea, required=False)
