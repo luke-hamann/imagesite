@@ -263,11 +263,11 @@ footer {
 }
 
 #toggleAdvanced + label::before {
-    content: "▷";
+    content: '\25B7';
 }
 
 #toggleAdvanced:checked + label::before {
-    content: "▽";
+    content: '\25BD';
 }
 
 #toggleAdvanced:checked ~ #advancedSearch {
