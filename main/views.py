@@ -21,7 +21,7 @@ ENABLE_AUTOTAGGING = True
 SEARCH_RESULTS_PER_PAGE = 10
 
 
-if ENABLE_AUTOTAGGING:
+if (ENABLE_AUTOTAGGING):
     """Initialize the image tagging model"""
     IMAGE_SIZE = 384
     device = torch.device('cpu')
@@ -33,17 +33,12 @@ if ENABLE_AUTOTAGGING:
 
 
 def image(request: HttpRequest, image_id: int) -> HttpResponse:
-    """Return a given image file, resizing it if specified"""
+    """Return the image file associated with an id, resizing it if specified"""
 
     image = get_object_or_404(Image, pk=image_id)
     format = request.GET.get('format', 'original')
 
     im = PIL.Image.open(image.file)
-
-    content_type = im.get_format_mimetype()
-    file_extension = content_type.split("/")[1]
-
-    buffer = io.BytesIO()
 
     match format:
         case 'thumbnail':
@@ -52,6 +47,10 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
             im.thumbnail((512, 512))
         case 'theater':
             im.thumbnail((1080, 1080))
+
+    content_type = im.get_format_mimetype()
+    file_extension = content_type.split("/")[1]
+    buffer = io.BytesIO()
 
     im.save(buffer, file_extension)
     im.close()
