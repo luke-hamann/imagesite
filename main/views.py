@@ -60,6 +60,7 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
 
 def autocomplete(request: HttpRequest) -> HttpResponse:
     """Provide search suggestions based on a query and existing tags"""
+    
     query = request.GET.get('q', '')
 
     if (query == ''):
@@ -72,8 +73,8 @@ def autocomplete(request: HttpRequest) -> HttpResponse:
             last_token = last_token[1:]
 
         tags = Tag.objects.all()
-        tags = tags.filter(~Q(name__in=tokens))
         tags = tags.filter(name__startswith=last_token)
+        tags = tags.exclude(name__in=tokens)
         tags = tags[:7]
 
         suggestions = []
@@ -122,6 +123,7 @@ def autotag(request: HttpRequest) -> HttpResponse:
 
 def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
     """Render the detail page for an individual image"""
+
     image = get_object_or_404(Image, pk=image_id)
 
     if (slug != image.slug()):
@@ -134,6 +136,7 @@ def detail(request: HttpRequest, image_id: int, slug: str = '') -> HttpResponse:
 
 def tags(request: HttpRequest) -> HttpResponse:
     """Display a page listing all tags"""
+
     return render(request, 'tags.html', {'tags': Tag.objects.all()})
 
 
@@ -142,7 +145,7 @@ def setTags(image: Image, tagNames: list[str]) -> None:
 
     for tag in image.tags.all():
         count = Image.objects.filter(tags__id=tag.id).count()
-        if count == 1:
+        if (count == 1):
             tag.delete()
     
     image.tags.clear()
@@ -165,10 +168,10 @@ def upload(request: HttpRequest) -> HttpResponse:
 
         if (form.is_valid()):
             file = request.FILES['file']
-            title: str = form.cleaned_data['title']
-            tagsString: str = form.cleaned_data['tags']
-            tagNames: set[str] = set(tagsString.split())
-            description: str = form.cleaned_data['description']
+            title = form.cleaned_data['title']
+            tagsString = form.cleaned_data['tags']
+            tagNames = set(tagsString.split())
+            description = form.cleaned_data['description']
 
             image = Image(file=file, title=title, description=description)
             image.save()
@@ -216,7 +219,7 @@ def edit(request: HttpRequest, image_id: int, slug: str) -> HttpResponse:
 
 
 def delete(request: HttpRequest, image_id: int, slug: str) -> HttpResponse:
-    """Confirm or accept the deletion of an image"""
+    """Confirm or process the deletion of an image"""
 
     image = get_object_or_404(Image, pk=image_id)
 
@@ -237,12 +240,12 @@ def search(request: HttpRequest) -> HttpResponse:
     """Process a search query and render the results"""
 
     # Get the search parameters
-    query: str = request.GET.get('q', '')
-    include_tags: str = request.GET.get('include_tags', 'on')
-    include_titles: str = request.GET.get('include_titles', 'on')
-    include_descriptions: str = request.GET.get('include_descriptions', 'on')
-    sort_by: str = request.GET.get('sort_by', 'date')
-    reverse_sort: str = request.GET.get('reverse_sort', 'on')
+    query = request.GET.get('q', '')
+    include_tags = request.GET.get('include_tags', 'on')
+    include_titles = request.GET.get('include_titles', 'on')
+    include_descriptions = request.GET.get('include_descriptions', 'on')
+    sort_by = request.GET.get('sort_by', 'date')
+    reverse_sort = request.GET.get('reverse_sort', 'on')
 
     try:
         page_number = int(request.GET.get('p', 1))
