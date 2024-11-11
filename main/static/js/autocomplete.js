@@ -63,7 +63,7 @@
     });
 
     /**
-     * Render the autocomplete menu everytime the user changes the search text
+     * Render the autocomplete menu every time the user changes the search text
      */
     inputElement.addEventListener('input', () => {
         selectedIndex = -1;
@@ -81,7 +81,7 @@
         if (!['ArrowUp', 'ArrowDown'].includes(event.key)) return;
         event.preventDefault();
 
-        suggestionList = document.querySelector(SUGGESTION_LIST);
+        var suggestionList = document.querySelector(SUGGESTION_LIST);
         if (suggestionList == null) return;
 
         var suggestionElements =
@@ -111,6 +111,7 @@
             inputElement.value = currentValue;
         }
 
+        // Move the cursor to the end of the input element
         var index = inputElement.value.length;
         inputElement.setSelectionRange(index, index);
     });
