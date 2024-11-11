@@ -48,9 +48,9 @@ def image(request: HttpRequest, image_id: int) -> HttpResponse:
         case 'theater':
             im.thumbnail((1080, 1080))
 
+    buffer = io.BytesIO()
     content_type = im.get_format_mimetype()
     file_extension = content_type.split("/")[1]
-    buffer = io.BytesIO()
 
     im.save(buffer, file_extension)
     im.close()
