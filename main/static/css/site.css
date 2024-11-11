@@ -274,6 +274,11 @@ footer {
     display: block;
 }
 
+.label-spacer {
+    display: inline-block;
+    width: 3rem;
+}
+
 /* Upload Form */
 
 .form-upload {

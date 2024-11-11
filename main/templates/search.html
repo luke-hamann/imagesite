@@ -17,8 +17,7 @@
                 <input type="submit" value="Go"
                     class="button button-green outline" />
                 <input type="checkbox" id="toggleAdvanced" />
-                <label for="toggleAdvanced"
-                    class="button button-blue outline">
+                <label for="toggleAdvanced" class="button button-blue outline">
                     Advanced
                 </label>
                 <div id="advancedSearch" class="margin-top outline left">
@@ -35,13 +34,16 @@
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="include_titles" value="on"
                                 id="include_titles_yes"
-                                {% if include_titles == 'on' %} checked {% endif %} />
-                            <label for="include_titles_yes">
+                                {% if include_titles == 'on' %} checked
+                                {% endif %} />
+                            <label for="include_titles_yes"
+                                class="label-spacer">
                                 yes
                             </label>
-                            <input type="radio" name="include_titles" value="off"
-                                id="include_titles_no"
-                                {% if include_titles == 'off' %} checked {% endif %} />
+                            <input type="radio" name="include_titles"
+                                value="off" id="include_titles_no"
+                                {% if include_titles == 'off' %} checked
+                                {% endif %} />
                             <label for="include_titles_no">
                                 no
                             </label>
@@ -54,13 +56,15 @@
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="include_tags" value="on"
                                 id="include_tags_yes"
-                                {% if include_tags == 'on' %} checked {% endif %} />
-                            <label for="include_tags_yes">
+                                {% if include_tags == 'on' %} checked
+                                {% endif %} />
+                            <label for="include_tags_yes" class="label-spacer">
                                 yes
                             </label>
                             <input type="radio" name="include_tags" value="off"
                                 id="include_tags_no"
-                                {% if include_tags == 'off' %} checked {% endif %} />
+                                {% if include_tags == 'off' %} checked
+                                {% endif %} />
                             <label for="include_tags_no">
                                 no
                             </label>
@@ -73,13 +77,16 @@
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="include_descriptions"
                                 value="on" id="include_descriptions_yes"
-                                {% if include_descriptions == 'on' %} checked {% endif %} />
-                            <label for="include_descriptions_yes">
+                                {% if include_descriptions == 'on' %} checked
+                                {% endif %} />
+                            <label for="include_descriptions_yes"
+                                class="label-spacer">
                                 yes
                             </label>
                             <input type="radio" name="include_descriptions"
                                 value="off" id="include_descriptions_no"
-                                {% if include_descriptions == 'off' %} checked {% endif %} />
+                                {% if include_descriptions == 'off' %} checked
+                                {% endif %} />
                             <label for="include_descriptions_no">
                                 no
                             </label>
@@ -92,13 +99,15 @@
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="sort_by" value="date"
                                 id="sort_by_date"
-                                {% if sort_by == 'date' %} checked {% endif %} />
-                            <label for="sort_by_date">
+                                {% if sort_by == 'date' %} checked
+                                {% endif %} />
+                            <label for="sort_by_date" class="label-spacer">
                                 date
                             </label>
                             <input type="radio" name="sort_by" value="title"
                                 id="sort_by_title"
-                                {% if sort_by == 'title' %} checked {% endif %} />
+                                {% if sort_by == 'title' %} checked
+                                {% endif %} />
                             <label for="sort_by_title">
                                 title
                             </label>
@@ -111,13 +120,15 @@
                         <div class="inline-block search-advanced-option">
                             <input type="radio" name="reverse_sort" value="on"
                                 id="reverse_sort_yes"
-                                {% if reverse_sort == 'on' %} checked {% endif %} />
-                            <label for="reverse_sort_yes">
+                                {% if reverse_sort == 'on' %} checked
+                                {% endif %} />
+                            <label for="reverse_sort_yes" class="label-spacer">
                                 yes
                             </label>
                             <input type="radio" name="reverse_sort" value="off"
                                 id="reverse_sort_no"
-                                {% if reverse_sort == 'off' %} checked {% endif %} />
+                                {% if reverse_sort == 'off' %} checked
+                                {% endif %} />
                             <label for="reverse_sort_no">
                                 no
                             </label>
