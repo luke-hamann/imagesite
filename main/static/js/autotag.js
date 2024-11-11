@@ -23,7 +23,6 @@
 
         if (!file) {
             previewImage.src = initialSource;
-            suggestions = '';
             return;
         }
 
@@ -37,17 +36,17 @@
         label.appendChild(loadingIndicator);
         var state = 0;
         var icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
-        var interval = setInterval(() => {
+        var loadingInterval = setInterval(() => {
             loadingIndicator.innerText = ' ' + icons[state];
             state++;
             state %= icons.length;
         }, 100);
 
         // Set up the image upload
-        upload = new File([await file.arrayBuffer()], file.name, {
+        var data = new FormData();
+        var upload = new File([await file.arrayBuffer()], file.name, {
             'type': file.type
         });
-        var data = new FormData();
         data.append('csrfmiddlewaretoken', CSRF_TOKEN);
         data.append('file', upload);
 
@@ -65,7 +64,7 @@
             tagsInputElement.value += json.join(' ');
         })
         .finally(() => {
-            clearInterval(interval);
+            clearInterval(loadingInterval);
             loadingIndicator.remove();
         });
     });
