@@ -14,18 +14,15 @@
         <h2 class="margin">
             {{ image.title }}
         </h2>
-
         <p class="margin">
             {{ image.date }}
         </p>
-        
         <p class="margin">
             <b>Tags:</b>
             {% for tag in image.tags.all %}
                 <a href="{% url 'home' %}?q={{ tag.name }}">{{ tag.name }}</a>
             {% endfor %}
         </p>
-        
         <p class="margin">
             <a href="{% url 'edit' image.id image.slug %}"
                 class="button button-yellow outline">
@@ -36,7 +33,6 @@
                 Delete
             </a>
         </p>
-        
         <dialog class="dialog-confirm-delete">
             <h2 class="margin">
                 Confirm
@@ -57,13 +53,12 @@
                 </p>
             </form>
         </dialog>
-
         {% if image.description %}
             <div class="image-description margin">
                 {{ image.description | linebreaks }}
             </div>
         {% endif %}
-
-        <script src="{% static 'js/deletionDialog.js' %}"></script>
     </div>
+
+    <script src="{% static 'js/deletionDialog.js' %}"></script>
 {% endblock %}
