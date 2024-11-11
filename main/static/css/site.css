@@ -78,7 +78,7 @@ footer {
     display: flex;
 }
 
-.navbar-item, .navbar-link {
+.navbar-link {
     display: block;
     padding: 1rem;
 }

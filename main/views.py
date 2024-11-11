@@ -22,6 +22,7 @@ SEARCH_RESULTS_PER_PAGE = 10
 
 
 if ENABLE_AUTOTAGGING:
+    """Initialize the image tagging model"""
     IMAGE_SIZE = 384
     device = torch.device('cpu')
     transform = get_transform(image_size=IMAGE_SIZE)
