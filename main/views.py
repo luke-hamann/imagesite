@@ -254,37 +254,34 @@ def search(request: HttpRequest) -> HttpResponse:
 
     tokens = query.split()
 
-    positiveFilter = lambda token: not token.startswith('-')
-    negativeFilter = lambda token: token.startswith('-')
-
-    positiveTokens = filter(positiveFilter, tokens)
-    negativeTokens = filter(negativeFilter, tokens)
-    negativeTokens = map(lambda token: token[1:], negativeTokens)
+    positiveTokens = filter(lambda t: not t.startswith('-'), tokens)
+    negativeTokens = filter(lambda t: t.startswith('-'), tokens)
+    negativeTokens = map(lambda t: t[1:], negativeTokens)
 
     # Build the result set
     images = Image.objects.all()
 
     # Add positive filters
     for token in positiveTokens:
-        databaseQuery = Q()
+        tokenQuery = Q()
         if (include_tags == 'on'):
-            databaseQuery |= Q(tags__name=token)
+            tokenQuery |= Q(tags__name=token)
         if (include_titles == 'on'):
-            databaseQuery |= Q(title__icontains=token)
+            tokenQuery |= Q(title__icontains=token)
         if (include_descriptions == 'on'):
-            databaseQuery |= Q(description__icontains=token)
-        images = images.filter(databaseQuery)
+            tokenQuery |= Q(description__icontains=token)
+        images = images.filter(tokenQuery)
     
     # Add negative filters
     for token in negativeTokens:
-        databaseQuery = Q()
+        tokenQuery = Q()
         if (include_tags == 'on'):
-            databaseQuery |= Q(tags__name=token)
+            tokenQuery |= Q(tags__name=token)
         if (include_titles == 'on'):
-            databaseQuery |= Q(title__icontains=token)
+            tokenQuery |= Q(title__icontains=token)
         if (include_descriptions == 'on'):
-            databaseQuery |= Q(description__icontains=token)
-        images = images.exclude(databaseQuery)
+            tokenQuery |= Q(description__icontains=token)
+        images = images.exclude(tokenQuery)
 
     images = images.distinct()
 
