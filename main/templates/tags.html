@@ -9,11 +9,9 @@
         <h1 class="margin">
             All Tags
         </h1>
-
         <p class="margin">
             {{ tags.count }} tag{{ tags.count | pluralize }}
         </p>
-
         {% if tags.count > 0 %}
             <ul class="margin list-unstyled columns">
                 {% for tag in tags %}
